@@ -71,7 +71,7 @@ function Signin() {
 
     if (Object.keys(newErrors).length > 0) return;
     try {
-      const response = await axios.post(`${config.baseURL}signup`, { firstname: firstname, lastname: lastname, email: email, contact: contact, password: password,role:"student",industry:"-", userstatus:1,file:"../images/logo.png"}
+      const response = await axios.post(`${config.baseURL}signup`, { firstname: firstname, lastname: lastname, email: email, contact: contact, password: password,role:role,industry:industry, userstatus:1,file:files}
     );
       if (response.status === 200) {
         console.log("success");
