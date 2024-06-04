@@ -1,7 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import config from "../config";
+import { RadioButton } from "primereact/radiobutton";
+import { FileUpload } from "primereact/fileupload";
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 function Signin() {
   const navigate = useNavigate();
@@ -10,13 +14,27 @@ function Signin() {
   const [email, setEmail] = useState("");
   const [contact, setContact] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState("");
+  const [industry, setIndustry] = useState("");
+  const [files, setFiles] = useState("");
+  const fileInputRef = useRef(null);
   const [error, setError] = useState({});
+  const handleFileSelect = (event) => {
+    setFiles(event.files[0]); // Assuming you only want to select the first file
+  };
   async function signupData(e) {
     e.preventDefault();
     const newErrors = {};
-
-    if (!firstname) newErrors.firstname = "First name is required";
-    if (!lastname) newErrors.lastname = "Last name is required";
+    if (!firstname) {
+      newErrors.firstname = "First name is required";
+    } else if (!/^[a-zA-Z]+$/.test(firstname)) {
+      newErrors.firstname = "First Name should only contain alphabets";
+    }
+    if (!lastname) {
+      newErrors.lastname = "Last name is required";
+    } else if (!/^[a-zA-Z]+$/.test(lastname)) {
+      newErrors.lastname = "Last Name should only contain alphabets";
+    }
     if (!email) {
       newErrors.email = "Email is required";
     } 
@@ -25,38 +43,64 @@ function Signin() {
     // }
     if (!contact) {
       newErrors.contact = "Contact number is required";
-    } 
-    // else if (!/^\d{10}$/.test(contact)) {
+    }
+    //  else if (!/^\d{10}$/.test(contact)) {
     //   newErrors.contact = "Contact number is invalid";
     // }
     if (!password) {
       newErrors.password = "Password is required";
+    } else if (password.length < 6) {
+      newErrors.password = "Password must be at least 8 characters long";
     } 
-    // else if (password.length < 6) {
-    //   newErrors.password = "Password must be at least 6 characters long";
+    // else {
+    //   if (!/[A-Z]/.test(password)) {
+    //     newErrors.password =
+    //       "Password must contain at least one uppercase letter";
+    //   } else if (!/[a-z]/.test(password)) {
+    //     newErrors.password =
+    //       "Password must contain at least one lowercase letter";
+    //   } else if (!/\d/.test(password)) {
+    //     newErrors.password = "Password must contain at least one number";
+    //   } else if (!/[!@#$%^&*()]/.test(password)) {
+    //     newErrors.password =
+    //       "Password must contain at least one special character (!@#$%^&*())";
+    //   }
     // }
 
     setError(newErrors);
 
     if (Object.keys(newErrors).length > 0) return;
     try {
-      const response = await axios.post(
-        `${config.baseURL}signup`,
-        { firstname: firstname, lastname: lastname, email: email, contact: contact, password: password,role:"student",industry:"-", userstatus:1,file:"../images/logo.png"}
-      );
+      const response = await axios.post(`${config.baseURL}signup`, { firstname: firstname, lastname: lastname, email: email, contact: contact, password: password,role:"student",industry:"-", userstatus:1,file:"../images/logo.png"}
+    );
       if (response.status === 200) {
         console.log("success");
         localStorage.setItem("email", email);
         localStorage.setItem("contact", contact);
         localStorage.setItem("authToken", response.data.token);
-        navigate("/");
+        setFirstname("");
+        setLastname("");
+        setContact("");
+        setEmail("");
+        setPassword("");
+        setIndustry("");
+        setFiles(null);
+        if (fileInputRef.current) {
+          fileInputRef.current.clear();
+        }
+        toast.success("Registered successfully");
+        setTimeout(() => {
+          navigate("/");
+        }, 3000);
       }
     } catch (error) {
       if (error.response && error.response.status === 401) {
         console.log("Invalid email or contact number");
+        toast.error("Try again");
       } else {
         console.error("Error message:", error.message);
         console.log("An unexpected error occurred. Please try again later.");
+        toast.error("Something went wrong");
       }
     }
   }
@@ -86,9 +130,9 @@ function Signin() {
           </div>
           <form className="px-16 pt-4 pb-1 mb-3" onSubmit={signupData}>
             <div className="mb-4">
-              {/* <label className="block text-gray-700 text-lg font-bold mb-2">
+              <label className="block text-gray-700 text-lg font-bold mb-2">
                 First Name
-              </label> */}
+              </label>
               <input
                 className="shadow appearance-none border rounded w-full py-2 px-3 h-12 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 id="firstname"
@@ -97,12 +141,14 @@ function Signin() {
                 placeholder="First Name"
                 onChange={(e) => setFirstname(e.target.value)}
               />
-              {error.firstname && <span className="text-red-500 text-sm">{error.firstname}</span>}
+              {error.firstname && (
+                <span className="text-red-500 text-sm">{error.firstname}</span>
+              )}
             </div>
             <div className="mb-4">
-              {/* <label className="block text-gray-700 text-lg font-bold mb-2">
+              <label className="block text-gray-700 text-lg font-bold mb-2">
                 Last Name
-              </label> */}
+              </label>
               <input
                 className="shadow appearance-none border rounded w-full py-2 px-3 h-12 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 id="lastname"
@@ -111,26 +157,30 @@ function Signin() {
                 placeholder="Last Name"
                 onChange={(e) => setLastname(e.target.value)}
               />
-              {error.lastname && <span className="text-red-500 text-sm">{error.lastname}</span>}
+              {error.lastname && (
+                <span className="text-red-500 text-sm">{error.lastname}</span>
+              )}
             </div>
             <div className="mb-4">
-              {/* <label className="block text-gray-700 text-lg font-bold mb-2">
+              <label className="block text-gray-700 text-lg font-bold mb-2">
                 Email
-              </label> */}
+              </label>
               <input
                 className="shadow appearance-none border rounded w-full py-2 px-3 h-12 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 id="email"
-                type="email"
+                type="text"
                 value={email}
                 placeholder="Email"
                 onChange={(e) => setEmail(e.target.value)}
               />
-              {error.email && <span className="text-red-500 text-sm">{error.email}</span>}
+              {error.email && (
+                <span className="text-red-500 text-sm">{error.email}</span>
+              )}
             </div>
             <div className="mb-4">
-              {/* <label className="block text-gray-700 text-lg font-bold mb-2">
+              <label className="block text-gray-700 text-lg font-bold mb-2">
                 Phone Number
-              </label> */}
+              </label>
               <input
                 className="shadow appearance-none border rounded w-full py-2 px-3 h-12 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 id="number"
@@ -139,12 +189,122 @@ function Signin() {
                 placeholder="Contact Number"
                 onChange={(e) => setContact(e.target.value)}
               />
-              {error.contact && <span className="text-red-500 text-sm">{error.contact}</span>}
+              {error.contact && (
+                <span className="text-red-500 text-sm">{error.contact}</span>
+              )}
             </div>
             <div className="mb-4">
-              {/* <label className="block text-gray-700 text-lg font-bold mb-2">
+              <label className="block text-gray-700 text-lg font-bold mb-2">
+                Role
+              </label>
+              <div className="card flex justify-content-center">
+                <div className="flex flex-wrap gap-3">
+                  <div className="flex align-items-center">
+                    <RadioButton
+                      inputId="student"
+                      name="student"
+                      value="Student"
+                      onChange={(e) => setRole(e.value)}
+                      checked={role === "student"}
+                    />
+                    <label htmlFor="student" className="ml-2">
+                      Student
+                    </label>
+                  </div>
+                  <div className="flex align-items-center">
+                    <RadioButton
+                      inputId="solver"
+                      name="solver"
+                      value="Solver"
+                      onChange={(e) => setRole(e.value)}
+                      checked={role === "solver"}
+                    />
+                    <label htmlFor="solver" className="ml-2">
+                      Solver
+                    </label>
+                  </div>
+                </div>
+              </div>
+              {error.role && (
+                <span className="text-red-500 text-sm">{error.role}</span>
+              )}
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700 text-lg font-bold mb-2">
+                Select an Industry
+              </label>
+              <div className="card flex justify-content-center">
+                <select
+                  id="exampleSelect"
+                  className="mt-1 block w-full py-2 px-3 border-2 border-blue-500 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  value={industry}
+                  name="industry"
+                  onChange={(e) => setIndustry(e.target.value)}>
+                  <option>Select an industry</option>
+                  <option>Mobile solution</option>
+                  <option>Web Development</option>
+                  <option>Social Media Marketing</option>
+                  <option>Health Care</option>
+                </select>
+              </div>
+              {error.industry && (
+                <span className="text-red-500 text-sm mt-2">
+                  {error.industry}
+                </span>
+              )}
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700 text-lg font-bold mb-2">
+                Profile Picture
+              </label>
+              <div className="card">
+                <FileUpload
+                  name="files"
+                  ref={fileInputRef}
+                  multiple
+                  accept="image/*"
+                  maxFileSize={1000000}
+                  emptyTemplate={
+                    <p className="m-3 text-gray-500 text-center py-4 border-dashed border-2 border-blue-500 rounded">
+                      Drag and drop files to here to upload.
+                    </p>
+                  }
+                  chooseOptions={{
+                    label: "Choose",
+                    icon: "pi pi-fw pi-plus",
+                    className:
+                      "p-button p-component m-3 w-20 h-8 bg-blue-600 rounded text-white hover:bg-blue-700",
+                  }}
+                  uploadOptions={{
+                    label: "Upload",
+                    icon: "pi pi-upload",
+                    className:
+                      "p-button p-component m-3 w-20 h-8 bg-green-600 rounded text-white hover:bg-green-700",
+                  }}
+                  cancelOptions={{
+                    label: "Cancel",
+                    icon: "pi pi-times",
+                    className:
+                      "p-button p-component m-3 w-20 h-8 bg-red-600 rounded text-white hover:bg-red-700",
+                  }}
+                  onSelect={handleFileSelect}
+                />
+                {/* <input 
+        type="file" name="files"
+        onChange={(e) => setFile(e.target.files[0])}
+        className="border-2 border-blue-500 hover:border-blue-700"
+      /> */}
+                {error.files && (
+                  <span className="text-red-500 text-sm mt-2">
+                    {error.files}
+                  </span>
+                )}
+              </div>
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700 text-lg font-bold mb-2">
                 Password
-              </label> */}
+              </label>
               <input
                 className="shadow appearance-none border rounded w-full py-2 px-3 h-12 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 id="password"
@@ -153,7 +313,9 @@ function Signin() {
                 placeholder="Password"
                 onChange={(e) => setPassword(e.target.value)}
               />
-              {error.password && <span className="text-red-500 text-sm">{error.password}</span>}
+              {error.password && (
+                <span className="text-red-500 text-sm">{error.password}</span>
+              )}
             </div>
             <div className="flex items-center justify-between">
               <button
@@ -170,6 +332,7 @@ function Signin() {
           </div>
         </div>
       </div>
+      <ToastContainer/>
     </div>
   );
 }

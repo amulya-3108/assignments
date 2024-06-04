@@ -35,8 +35,8 @@ function Otp() {
           localStorage.setItem("authToken", token);
           toast.success("Login Successful!");
         setTimeout(() => {
-            navigate("/");
-          }, 5000);
+            navigate("/home");
+          }, 3000);
         } else {
           toast.error("Something went wrong tray again");
         }

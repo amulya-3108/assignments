@@ -11,8 +11,10 @@ import ForgotPassword from "./Components/ForgotPassword";
 import ChangePassword from "./Components/ChangePassword";
 import Otp from "./Components/Otp";
 import ProtectedRoute from "./ProtectedRoute";
+import Home from "./Components/Home";
 import Addassignments from "./Components/AddAssignments";
 import Viewassignments from "./Components/ViewAssignments";
+import Feedback from "./Components/Feedback";
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -83,9 +85,11 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route path="/home" element={<Home />} />
           <Route path="/changepassword" element={<ChangePassword />} />
           <Route path="/addassignments" element={<Addassignments />} />
           <Route path="/viewassignments" element={<Viewassignments />} />
+          <Route path="/feedback" element={<Feedback />} />
           {/* <Route path="/signin" element={<Signin />} />
           <Route path="/login" element={<Login />} />
           <Route path="/password" element={<Password />} />

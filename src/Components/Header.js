@@ -4,8 +4,7 @@ import { Menu, X } from "lucide-react";
 function Header() {
   const [isActive, setActive] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isAssignmentsDropdownOpen, setAssignmentsDropdownOpen] =
-    useState(false);
+  const [isAssignmentsDropdownOpen, setAssignmentsDropdownOpen] = useState(false);
   const [isProfileDropdownOpen, setProfileDropdownOpen] = useState(false);
 
   const toogleNav = () => {
@@ -33,62 +32,46 @@ function Header() {
         </div>
       </Link>
       <nav className="flex justify-center">
-        {isLoggedIn ? (
+      {isLoggedIn ? (
           <div className="hidden w-full md:flex justify-between items-center">
+            <div className="relative">
+              <Link to="/home" className="px-6 py-2 text-center font-bold">Home</Link>
+            </div>
             <div
               className="relative"
               onMouseEnter={() => setAssignmentsDropdownOpen(true)}
-              onMouseLeave={() => setAssignmentsDropdownOpen(false)}>
-              <Link to="/profile" className="px-6 py-2 text-center font-bold">
-                Assignments
-              </Link>
+              onMouseLeave={() => setAssignmentsDropdownOpen(false)}
+            >
+              <Link to="" className="px-6 py-2 text-center font-bold">Assignments</Link>
               {isAssignmentsDropdownOpen && (
                 <div className="absolute bg-white border w-56 mt-2 py-2 rounded shadow-lg">
-                  <Link
-                    to="/addassignments"
-                    className="block px-4 py-2 text-black hover:bg-gray-200">
-                    Add Assignment
-                  </Link>
-                  <Link
-                    to="/viewassignments"
-                    className="block px-4 py-2 text-black hover:bg-gray-200">
-                    View Assignment
-                  </Link>
+                  <Link to="/addassignments" className="block px-4 py-2 text-black hover:bg-gray-200">Add Assignment</Link>
+                  <Link to="/viewassignments" className="block px-4 py-2 text-black hover:bg-gray-200">View Assignment</Link>
                 </div>
               )}
             </div>
             <div
               className="relative"
               onMouseEnter={() => setProfileDropdownOpen(true)}
-              onMouseLeave={() => setProfileDropdownOpen(false)}>
-              <Link to="/profile" className="px-6 py-2 text-center font-bold">
-                Profile
-              </Link>
+              onMouseLeave={() => setProfileDropdownOpen(false)}
+            >
+              <Link to="/profile" className="px-6 py-2 text-center font-bold">Profile</Link>
               {isProfileDropdownOpen && (
                 <div className="absolute bg-white border w-56 mt-2 py-2 rounded shadow-lg">
-                  <Link
-                    to="/changepassword"
-                    className="block px-4 py-2 text-black hover:bg-gray-200">
-                    Change Password
-                  </Link>
-                  <Link
-                    to="/assignment2"
-                    className="block px-4 py-2 text-black hover:bg-gray-200">
-                    Settings
-                  </Link>
+                  <Link to="/changepassword" className="block px-4 py-2 text-black hover:bg-gray-200">Change Password</Link>
+                  <Link to="/assignment2" className="block px-4 py-2 text-black hover:bg-gray-200">Settings</Link>
                 </div>
               )}
             </div>
             <div className="relative">
-              <button
-                onClick={handleLogout}
-                className="px-6 py-2 text-center font-bold">
-                Logout
-              </button>
+              <button onClick={handleLogout} className="px-6 py-2 text-center font-bold">Logout</button>
             </div>
           </div>
-        ) : (
+        )  : (
           <div className="hidden w-full md:flex justify-between">
+            <Link to="/" className="px-6 py-2 text-center font-bold">
+              Home
+            </Link>
             <Link to="/login" className="px-6 py-2 text-center font-bold">
               Login
             </Link>
@@ -123,6 +106,9 @@ function Header() {
             </>
           ) : (
             <>
+              <Link to="/" className="px-6 py-2 text-center font-bold">
+                Home
+              </Link>
               <Link to="/login" className="px-6 py-2 text-center font-bold">
                 Login
               </Link>

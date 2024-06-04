@@ -72,9 +72,9 @@ function Footer() {
               <Link to="/facebook" className="hover:text-blue-500">
                 <FontAwesomeIcon icon={faFacebook} size="2x" />
               </Link>
-              <Link to="/twitter" className="hover:text-blue-400">
+              {/* <Link to="/twitter" className="hover:text-blue-400">
                 <FontAwesomeIcon icon={faTwitter} size="2x" />
-              </Link>
+              </Link> */}
               <Link to="/instagram" className="hover:text-pink-500">
                 <FontAwesomeIcon icon={faInstagram} size="2x" />
               </Link>
