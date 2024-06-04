@@ -37,41 +37,38 @@ function Signin() {
     }
     if (!email) {
       newErrors.email = "Email is required";
-    } 
-    // else if (!/\S+@\S+\.\S+/.test(email)) {
-    //   newErrors.email = "Email address is invalid";
-    // }
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      newErrors.email = "Email address is invalid";
+    }
     if (!contact) {
       newErrors.contact = "Contact number is required";
+    } else if (!/^\d{10}$/.test(contact)) {
+      newErrors.contact = "Contact number is invalid";
     }
-    //  else if (!/^\d{10}$/.test(contact)) {
-    //   newErrors.contact = "Contact number is invalid";
-    // }
     if (!password) {
       newErrors.password = "Password is required";
     } else if (password.length < 6) {
       newErrors.password = "Password must be at least 8 characters long";
-    } 
-    // else {
-    //   if (!/[A-Z]/.test(password)) {
-    //     newErrors.password =
-    //       "Password must contain at least one uppercase letter";
-    //   } else if (!/[a-z]/.test(password)) {
-    //     newErrors.password =
-    //       "Password must contain at least one lowercase letter";
-    //   } else if (!/\d/.test(password)) {
-    //     newErrors.password = "Password must contain at least one number";
-    //   } else if (!/[!@#$%^&*()]/.test(password)) {
-    //     newErrors.password =
-    //       "Password must contain at least one special character (!@#$%^&*())";
-    //   }
-    // }
+    } else {
+      if (!/[A-Z]/.test(password)) {
+        newErrors.password =
+          "Password must contain at least one uppercase letter";
+      } else if (!/[a-z]/.test(password)) {
+        newErrors.password =
+          "Password must contain at least one lowercase letter";
+      } else if (!/\d/.test(password)) {
+        newErrors.password = "Password must contain at least one number";
+      } else if (!/[!@#$%^&*()]/.test(password)) {
+        newErrors.password =
+          "Password must contain at least one special character (!@#$%^&*())";
+      }
+    }
 
     setError(newErrors);
 
     if (Object.keys(newErrors).length > 0) return;
     try {
-      const response = await axios.post(`${config.baseURL}signup`, { firstname: firstname, lastname: lastname, email: email, contact: contact, password: password,role:role,industry:industry, userstatus:1,file:files}
+      const response = await axios.post(`${config.baseURL}signup`, { firstname: firstname, lastname: lastname, email: email, contact: contact, password: password,role:role,industry:industry, userstatus:1,file:files  }
     );
       if (response.status === 200) {
         console.log("success");
