@@ -49,7 +49,7 @@ function Header() {
   };
 
   return (
-    <header className="bg-white sticky top-0 flex-wrap z-[20] mx-auto flex w-full items-center justify-between p-8">
+    <header className="bg-white sticky top-0 flex-wrap z-[20] mx-auto flex w-full items-center justify-between p-5">
       <Link to="/">
         <div className="logo w-16 h-16">
           <img src="../images/logo.png" alt="logo" />

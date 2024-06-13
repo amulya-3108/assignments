@@ -168,7 +168,7 @@ function Content() {
           ))}
         </Swiper>
       </div>
-        <AllInfo/>
+      <AllInfo />
       <div className="w-4/5 m-auto mt-20 mb-14">
         <Slider {...settings}>
           {languages.map((d, index) => (

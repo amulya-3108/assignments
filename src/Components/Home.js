@@ -64,7 +64,7 @@ function Home() {
   return (
     <div>
       <Header />
-      <div className="container mx-auto my-10">
+      <div className="container mx-auto my-10 mb-28">
         <div className="flex justify-around mb-10">
           <div className="p-6 text-center relative w-52 h-56">
             <div className="absolute inset-0 border-4 border-t-blue-500 border-l-blue-500 rounded-full animate-spin"></div>

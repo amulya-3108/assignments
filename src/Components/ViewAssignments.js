@@ -3,7 +3,7 @@ import "../index.css";
 import Header from "./Header";
 import Footer from "./Footer";
 import { ToastContainer, toast } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import config from "../config";
 import { Link } from "react-router-dom";
@@ -25,7 +25,7 @@ function Viewassignments() {
           const data = response.data.data; // Extract the array from the data property
           if (Array.isArray(data)) {
             setAssignments(data);
-            toast.success("Assignments loaded successfully!");
+            // toast.success("Assignments loaded successfully!");
           } else {
             console.error("Unexpected response format:", data);
             setAssignments([]);
@@ -61,7 +61,9 @@ function Viewassignments() {
         <h1 className="text-4xl font-semibold text-center my-5">View Work</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 mx-20">
           {assignments.map((assignment, index) => (
-            <div key={index} className="bg-blue-100 p-6 rounded-lg shadow-lg h-auto w-full">
+            <div
+              key={index}
+              className="bg-blue-100 p-6 rounded-lg shadow-lg h-auto w-full">
               <p className="text-xl font-semibold text-blue-800 p-2">
                 Assignment Name: {assignment.assignmentName}
               </p>
@@ -69,24 +71,30 @@ function Viewassignments() {
                 Deadline: {formatDeadline(assignment.deadlineDate)}
               </p>
               <p className="text-xl font-semibold text-blue-800 p-2">
-               Price: {assignment.price}
+                Price: {assignment.price}
               </p>
-              <p className="text-xl font-semibold text-blue-800 p-2">
-               Rating: {assignment.performanceRating}
-              </p>
-              <p className="text-xl font-semibold text-blue-800 p-2">
-                Feedback: <span dangerouslySetInnerHTML={{ __html: assignment.FeedbackMessage }}/>
-              </p>
-              {assignment.uploadedFiles !== '-' && (
+              {assignment.performanceRating !== "-" && (
+                <p className="text-xl font-semibold text-blue-800 p-2">
+                  Rating: {assignment.performanceRating}
+                </p>
+              )}
+              {assignment.FeedbackMessage !== "-" && (
+                <p className="text-xl font-semibold text-blue-800 p-2">
+                  <span style={{ display: 'inline-block', marginRight: '8px' }}>Feedback:</span>
+                  <span style={{ display: 'inline-block' }} dangerouslySetInnerHTML={{ __html: assignment.FeedbackMessage }} />
+                </p>
+              )}
+              {assignment.uploadedFiles !== "-" && (
                 <div className="flex justify-around items-center mt-5">
                   <a
                     href={`${config.baseURL}uploads/${assignment.uploadedFiles}`}
                     className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-                    download
-                  >
+                    download>
                     Download
                   </a>
-                  <Link to={`/feedback?a=${assignment._id}`} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                  <Link
+                    to={`/feedback?a=${assignment._id}`}
+                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
                     Feedback
                   </Link>
                 </div>
@@ -101,9 +109,8 @@ function Viewassignments() {
   );
   function formatDeadline(deadline) {
     const date = new Date(deadline);
-    return date.toISOString().split('T')[0];
+    return date.toISOString().split("T")[0];
   }
-  
 }
 
 export default Viewassignments;

@@ -9,7 +9,7 @@ import config from "../config";
 import { Link } from "react-router-dom";
 
 const acceptWork = async (e, assignmentId) => {
-  e.preventDefault(); // Prevent the default behavior of the anchor tag
+  e.preventDefault(); 
 
   try {
     const token = localStorage.getItem("authToken");
@@ -18,12 +18,12 @@ const acceptWork = async (e, assignmentId) => {
       return;
     }
 
-    console.log("Token retrieved:", token); // Log the token
+    console.log("Token retrieved:", token);
 
     const response = await axios.put(
       `${config.baseURL}sendAssSolvereq/${assignmentId}`,
-      {}, // Empty body for PUT request
-      { headers: { Authorization: `Bearer ${token}` } }
+      {},
+      { headers: { Authorization: token } }
     );
 
     if (response.status === 200) {
@@ -35,7 +35,7 @@ const acceptWork = async (e, assignmentId) => {
     } else {
       toast.error("Something went wrong, try again!");
     }
-    console.log("Error:", error); // Log the error for debugging
+    console.log("Error:", error);
   }
 };
 
@@ -54,17 +54,17 @@ function Showwork() {
           return;
         }
 
-        console.log("Token retrieved:", token); // Log the token
+        console.log("Token retrieved:", token);
 
         const response = await axios.get(`${config.baseURL}showAssignments`, {
           headers: { Authorization: token },
         });
 
         if (response.status === 200) {
-          const data = response.data.data; // Extract the array from the data property
+          const data = response.data.data;
           if (Array.isArray(data)) {
             setAssignments(data);
-            toast.success("Assignments loaded successfully!");
+            // toast.success("Assignments loaded successfully!");
           } else {
             console.error("Unexpected response format:", data);
             setAssignments([]);

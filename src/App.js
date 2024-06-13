@@ -19,6 +19,9 @@ import Viewassignments from "./Components/ViewAssignments";
 import Feedback from "./Components/Feedback";
 import Showwork from "./Components/ShowWork";
 import Acceptedassignments from "./Components/AcceptedAssignments";
+import Aboutus from "./Components/AboutUs";
+import Contactus from "./Components/ContactUs";
+import Privacypolicy from "./Components/PrivacyPolicy";
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -68,6 +71,9 @@ function App() {
               <Route path="/forgotpassword" element={<ProtectedRoute><ForgotPassword /></ProtectedRoute>} />
             </>
           {/* )} */}
+              <Route path="/aboutus" element={<Aboutus />} />
+              <Route path="/contactus" element={<Contactus />} />
+              <Route path="/privacypolicy" element={<Privacypolicy />} />
         </Routes>
       </div>
     </Router>

@@ -22,12 +22,12 @@ function Footer() {
                 </Link>
               </li>
               <li>
-                <Link to="/about" className="hover:underline">
+                <Link to="/aboutus" className="hover:underline">
                   About Us
                 </Link>
               </li>
               <li>
-                <Link to="/contact" className="hover:underline">
+                <Link to="/contactus" className="hover:underline">
                   Contact Us
                 </Link>
               </li>
@@ -52,7 +52,7 @@ function Footer() {
             <h2 className="text-xl font-semibold mb-4">Legal</h2>
             <ul>
               <li>
-                <Link to="/privacy-policy" className="hover:underline">
+                <Link to="/privacypolicy" className="hover:underline">
                   Privacy Policy
                 </Link>
               </li>

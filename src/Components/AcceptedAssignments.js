@@ -24,7 +24,7 @@ function Acceptedassignments() {
         const token = localStorage.getItem("authToken");
 
         const response = await axios.get(
-          `${config.baseURL}doneAssignment`,
+          `${config.baseURL}showAssignmentsByAcc`,
           { headers: { Authorization: token } }
         );
         if (response.status === 200) {
