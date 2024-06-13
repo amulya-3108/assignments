@@ -27,42 +27,47 @@ function Signin() {
     const newErrors = {};
     if (!firstname) {
       newErrors.firstname = "First name is required";
-    } else if (!/^[a-zA-Z]+$/.test(firstname)) {
+    } 
+    else if (!/^[a-zA-Z]+$/.test(firstname.trim())) {
       newErrors.firstname = "First Name should only contain alphabets";
     }
     if (!lastname) {
       newErrors.lastname = "Last name is required";
-    } else if (!/^[a-zA-Z]+$/.test(lastname)) {
+    } 
+    else if (!/^[a-zA-Z]+$/.test(lastname.trim())) {
       newErrors.lastname = "Last Name should only contain alphabets";
     }
     if (!email) {
       newErrors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = "Email address is invalid";
-    }
+    } 
+    // else if (!/\S+@\S+\.\S+/.test(email)) {
+    //   newErrors.email = "Email address is invalid";
+    // }
     if (!contact) {
       newErrors.contact = "Contact number is required";
-    } else if (!/^\d{10}$/.test(contact)) {
-      newErrors.contact = "Contact number is invalid";
-    }
+    } 
+    // else if (!/^\d{10}$/.test(contact)) {
+    //   newErrors.contact = "Contact number is invalid";
+    // }
     if (!password) {
       newErrors.password = "Password is required";
     } else if (password.length < 6) {
       newErrors.password = "Password must be at least 8 characters long";
-    } else {
-      if (!/[A-Z]/.test(password)) {
-        newErrors.password =
-          "Password must contain at least one uppercase letter";
-      } else if (!/[a-z]/.test(password)) {
-        newErrors.password =
-          "Password must contain at least one lowercase letter";
-      } else if (!/\d/.test(password)) {
-        newErrors.password = "Password must contain at least one number";
-      } else if (!/[!@#$%^&*()]/.test(password)) {
-        newErrors.password =
-          "Password must contain at least one special character (!@#$%^&*())";
-      }
-    }
+    } 
+    // else {
+    //   if (!/[A-Z]/.test(password)) {
+    //     newErrors.password =
+    //       "Password must contain at least one uppercase letter";
+    //   } else if (!/[a-z]/.test(password)) {
+    //     newErrors.password =
+    //       "Password must contain at least one lowercase letter";
+    //   } else if (!/\d/.test(password)) {
+    //     newErrors.password = "Password must contain at least one number";
+    //   } else if (!/[!@#$%^&*()]/.test(password)) {
+    //     newErrors.password =
+    //       "Password must contain at least one special character (!@#$%^&*())";
+    //   }
+    // }
 
     setError(newErrors);
 
@@ -87,7 +92,7 @@ function Signin() {
         }
         toast.success("Registered successfully");
         setTimeout(() => {
-          navigate("/");
+          navigate("/home");
         }, 3000);
       }
     } catch (error) {
@@ -199,7 +204,7 @@ function Signin() {
                   <div className="flex align-items-center">
                     <RadioButton
                       inputId="student"
-                      name="student"
+                      name="role"
                       value="Student"
                       onChange={(e) => setRole(e.value)}
                       checked={role === "student"}
@@ -211,7 +216,7 @@ function Signin() {
                   <div className="flex align-items-center">
                     <RadioButton
                       inputId="solver"
-                      name="solver"
+                      name="role"
                       value="Solver"
                       onChange={(e) => setRole(e.value)}
                       checked={role === "solver"}

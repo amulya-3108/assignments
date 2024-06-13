@@ -12,12 +12,22 @@ import ChangePassword from "./Components/ChangePassword";
 import Otp from "./Components/Otp";
 import ProtectedRoute from "./ProtectedRoute";
 import Home from "./Components/Home";
+import Thankyou from "./Components/Thankyou";
+import Solverhome from "./Components/SolverHome";
 import Addassignments from "./Components/AddAssignments";
 import Viewassignments from "./Components/ViewAssignments";
 import Feedback from "./Components/Feedback";
+import Showwork from "./Components/ShowWork";
+import Acceptedassignments from "./Components/AcceptedAssignments";
 
 function App() {
   const [loading, setLoading] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("authToken");
+    setIsLoggedIn(!!token);
+  }, []);
 
   useEffect(() => {
     // Simulate loading time
@@ -31,71 +41,34 @@ function App() {
   if (loading) {
     return <Loader />;
   }
+
   return (
     <Router>
-      {/* <div className="App">
-      <header className="App-header">
-        <Header />
-      </header>
-    </div> */}
       <div className="flex flex-col min-h-screen">
-        {/* <Header /> */}
-        {/* <main className="flex-grow">
-          <Content />
-        </main> */}
         <Routes>
-          <Route path="/" element={<Content />} />
-          <Route
-            path="/signin"
-            element={
-              <ProtectedRoute>
-                <Signin />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/login"
-            element={
-              <ProtectedRoute>
-                <Login />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/password"
-            element={
-              <ProtectedRoute>
-                <Password />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/otp"
-            element={
-              <ProtectedRoute>
-                <Otp />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/forgotpassword"
-            element={
-              <ProtectedRoute>
-                <ForgotPassword />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="/home" element={<Home />} />
-          <Route path="/changepassword" element={<ChangePassword />} />
-          <Route path="/addassignments" element={<Addassignments />} />
-          <Route path="/viewassignments" element={<Viewassignments />} />
-          <Route path="/feedback" element={<Feedback />} />
-          {/* <Route path="/signin" element={<Signin />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/password" element={<Password />} />
-          <Route path="/otp" element={<Otp />} /> */}
+          {/* {isLoggedIn ? ( */}
+            <>
+              <Route path="/home" element={<Home />} />
+              <Route path="/solverhome" element={<Solverhome />} />
+              <Route path="/changepassword" element={<ChangePassword />} />
+              <Route path="/addassignments" element={<Addassignments />} />
+              <Route path="/viewassignments" element={<Viewassignments />} />
+              <Route path="/feedback" element={<Feedback />} />
+              <Route path="/showwork" element={<Showwork />} />
+              <Route path="/acceptedassignments" element={<Acceptedassignments />} />
+            </>
+          {/* ) : ( */}
+            <>
+              <Route path="/verification" element={<Thankyou />} />
+              <Route path="/" element={<ProtectedRoute><Content /></ProtectedRoute>} />
+              <Route path="/signin" element={<ProtectedRoute><Signin /></ProtectedRoute>} />
+              <Route path="/login" element={<ProtectedRoute><Login /></ProtectedRoute>} />
+              <Route path="/password" element={<ProtectedRoute><Password /></ProtectedRoute>} />
+              <Route path="/otp" element={<ProtectedRoute><Otp /></ProtectedRoute>} />
+              <Route path="/forgotpassword" element={<ProtectedRoute><ForgotPassword /></ProtectedRoute>} />
+            </>
+          {/* )} */}
         </Routes>
-        {/* <Footer /> */}
       </div>
     </Router>
   );

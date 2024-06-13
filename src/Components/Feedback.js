@@ -1,34 +1,69 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../index.css";
 import Header from "./Header";
 import Footer from "./Footer";
 import { RadioButton } from "primereact/radiobutton";
 import { Editor } from "primereact/editor";
+import { useLocation } from "react-router-dom";
 import config from "../config";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+function useQuery() {
+  const { search } = useLocation();
+  return React.useMemo(() => new URLSearchParams(search), [search]);
+}
+
 function Feedback() {
-  const [feedback, setFeedback] = useState("");
-  const [message, setMessage] = useState("");
+  const query = useQuery();
+  const id = query.get('a'); // Extract the 'a' query parameter
+
+  const [performanceRating, setFeedback] = useState(false);
+  const [Feedbackmessage, setMessage] = useState("");
   const [error, setError] = useState({});
+  const [submittedFeedback, setSubmittedFeedback] = useState("")
+
+  useEffect(() => {
+    console.log("Assignment ID:", id); // This should log the ID
+  }, [id]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    const newErrors = {};
+    if (!performanceRating){ newErrors.performanceRating = "Rating is required"}
+    if (!Feedbackmessage){ newErrors.Feedbackmessage = "Message is required"}
+    setError(newErrors);
     try {
-      //   const token = localStorage.getItem("authToken");
-      //   const response = await axios.post(`${config.baseURL}feedback/aid`, formData, {
-      //     headers: {
-      //       'Content-Type': 'multipart/form-data',
-      //       'Authorization': token
-      //     },
-      //   });
-      toast.success("Feedback submitted");
+      const token = localStorage.getItem("authToken");
+      const response = await axios.post(
+        `${config.baseURL}feedback/${id}`,
+        {
+          performanceRating: performanceRating,
+          FeedbackMessage: Feedbackmessage
+        },
+        {
+          headers: {
+            'Authorization': token
+          },
+        }
+      );
+      if (response.status === 200) {
+        setSubmittedFeedback(Feedbackmessage);
+        toast.success("Feedback submitted");
+        setFeedback(false);
+        setMessage('');
+      }
     } catch (error) {
-      toast.error("Error while submitting feedback. Try again!");
+      if (error.response && error.response.status === 401) {
+        toast.error("Error while submitting feedback, try again");
+      } else {
+        console.error("Error message:", error.message);
+        toast.error("Something went wrong, try again!");
+      }
     }
   };
+
   return (
     <div>
       <Header />
@@ -48,10 +83,10 @@ function Feedback() {
                     <div className="flex align-items-center">
                       <RadioButton
                         inputId="excellent"
-                        name="excellent"
+                        name="response"
                         value="Excellent"
                         onChange={(e) => setFeedback(e.value)}
-                        checked={feedback === "Excellent"}
+                        checked={performanceRating === "Excellent"}
                       />
                       <label htmlFor="excellent" className="ml-2">
                         Excellent
@@ -60,10 +95,10 @@ function Feedback() {
                     <div className="flex align-items-center">
                       <RadioButton
                         inputId="good"
-                        name="good"
+                        name="response"
                         value="Good"
                         onChange={(e) => setFeedback(e.value)}
-                        checked={feedback === "Good"}
+                        checked={performanceRating === "Good"}
                       />
                       <label htmlFor="good" className="ml-2">
                         Good
@@ -72,10 +107,10 @@ function Feedback() {
                     <div className="flex align-items-center">
                       <RadioButton
                         inputId="average"
-                        name="pizza"
+                        name="response"
                         value="Average"
                         onChange={(e) => setFeedback(e.value)}
-                        checked={feedback === "Average"}
+                        checked={performanceRating === "Average"}
                       />
                       <label htmlFor="average" className="ml-2">
                         Average
@@ -84,10 +119,10 @@ function Feedback() {
                     <div className="flex align-items-center">
                       <RadioButton
                         inputId="bad"
-                        name="pizza"
+                        name="response"
                         value="Bad"
                         onChange={(e) => setFeedback(e.value)}
-                        checked={feedback === "Bad"}
+                        checked={performanceRating === "Bad"}
                       />
                       <label htmlFor="bad" className="ml-2">
                         Bad
@@ -95,9 +130,9 @@ function Feedback() {
                     </div>
                   </div>
                 </div>
-                {error.feedback && (
+                {error.performanceRating && (
                   <span className="text-red-500 text-sm mt-2">
-                    {error.feedback}
+                    {error.performanceRating}
                   </span>
                 )}
               </div>
@@ -107,11 +142,16 @@ function Feedback() {
                 </label>
                 <div className="card flex justify-content-center">
                   <Editor
-                    value={message}
+                    value={Feedbackmessage}
                     onTextChange={(e) => setMessage(e.htmlValue)}
                     style={{ height: "220px" }}
                   />
                 </div>
+                {error.Feedbackmessage && (
+                  <span className="text-red-500 text-sm mt-2">
+                    {error.Feedbackmessage}
+                  </span>
+                )}
               </div>
               <div className="flex items-center justify-between">
                 <button

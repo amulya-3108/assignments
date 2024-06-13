@@ -21,24 +21,31 @@ function Otp() {
       setPassword(savedPassword);
     }
   }, []);
-  async function otpData(e) {
+
+  const otpData = async (e) => {
     e.preventDefault();
     setError("");
     try {
       const response = await axios.post(
         `${config.baseURL}otp/login`,
-        { email, password, otp } 
+        { email, password, otp }
       );
       if (response.status === 200) {
-        const { token } = response.data;
-        if (token) {
+        const { token, Data } = response.data;
+        if (token && Data.role) {
           localStorage.setItem("authToken", token);
           toast.success("Login Successful!");
-        setTimeout(() => {
-            navigate("/home");
+          setTimeout(() => {
+            if (Data.role === "student") {
+              navigate("/home");
+            } else if (Data.role === "solver") {
+              navigate("/solverhome");
+            } else {
+              navigate("/");
+            }
           }, 3000);
         } else {
-          toast.error("Something went wrong tray again");
+          toast.error("Something went wrong. Try again.");
         }
       }
     } catch (error) {
@@ -49,7 +56,21 @@ function Otp() {
         setError("An unexpected error occurred. Please try again later.");
       }
     }
-  }
+  };
+
+  const resendOtp = async () => {
+    try {
+      const response = await axios.post(`${config.baseURL}otp/resend`, { email, password });
+      if (response.status === 200) {
+        toast.success("OTP has been resent successfully!");
+      } else {
+        toast.error("Failed to resend OTP. Please try again.");
+      }
+    } catch (error) {
+      toast.error("An error occurred while resending OTP. Please try again.");
+    }
+  };
+
   return (
     <div className="container mx-auto w-full md:w-1/3 flex flex-col items-center justify-center mt-20 mb-4 rounded-2xl md:border p-4">
       <h1 className="text-4xl font-semibold my-5 text-center">OTP</h1>
@@ -57,17 +78,6 @@ function Otp() {
         <div className="w-full mx-auto justify-around items-center">
           <form className="px-16 pt-4 pb-1" onSubmit={otpData}>
             <div className="mb-4">
-              {/* <label className="block text-gray-700 text-sm font-bold mb-4">
-                OTP
-              </label> */}
-              {/* <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 h-12 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="otp"
-                type="text"
-                value={otp}
-                placeholder="OTP"
-                onChange={(e) => setOtp(e.target.value)}
-              /> */}
               <OtpInput
                 value={otp}
                 onChange={setOtp}
@@ -76,7 +86,8 @@ function Otp() {
                 renderInput={(props) => (
                   <input
                     {...props}
-                    className="shadow appearance-none border rounded w-10 md:w-24 h-12 items-center justify-center text-gray-700 text-center leading-tight focus:outline-none focus:shadow-outline" style={{ width: '3rem' }}
+                    className="shadow appearance-none border rounded w-10 md:w-24 h-12 items-center justify-center text-gray-700 text-center leading-tight focus:outline-none focus:shadow-outline"
+                    style={{ width: '3rem' }}
                   />
                 )}
               />
@@ -93,11 +104,11 @@ function Otp() {
             </div>
           </form>
           <div className="flex items-center justify-center mb-10">
-            {/* <div className="border-t border-black flex-grow h-0.5 mr-3 ml-20 mt-2"></div> */}
-            <Link onSubmit={otpData} className="text-blue-900 text-sm font-semibold">
+            <button
+              onClick={resendOtp}
+              className="text-blue-900 text-sm font-semibold">
               Still not received OTP? Resend it
-            </Link>
-            {/* <div className="border-t border-black flex-grow h-0.5 ml-3 mr-20 mt-2"></div> */}
+            </button>
           </div>
         </div>
       </div>

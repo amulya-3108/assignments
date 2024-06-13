@@ -227,7 +227,7 @@ function Content() {
                   <img
                     src={step.img}
                     alt={step.title}
-                    className="mx-auto h-80 absolute inset-0 w-full object-cover"
+                    className="mx-auto h-80 absolute inset-0 w-full object-cover dshd"
                   />
                 </div>
               </motion.div>

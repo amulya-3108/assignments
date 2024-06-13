@@ -72,10 +72,10 @@ function Viewassignments() {
                Price: {assignment.price}
               </p>
               <p className="text-xl font-semibold text-blue-800 p-2">
-               
+               Rating: {assignment.performanceRating}
               </p>
               <p className="text-xl font-semibold text-blue-800 p-2">
-              
+                Feedback: <span dangerouslySetInnerHTML={{ __html: assignment.FeedbackMessage }}/>
               </p>
               {assignment.uploadedFiles !== '-' && (
                 <div className="flex justify-around items-center mt-5">
@@ -86,7 +86,7 @@ function Viewassignments() {
                   >
                     Download
                   </a>
-                  <Link to="/feedback" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                  <Link to={`/feedback?a=${assignment._id}`} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
                     Feedback
                   </Link>
                 </div>
