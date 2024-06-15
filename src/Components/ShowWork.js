@@ -7,6 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import config from "../config";
 import { Link } from "react-router-dom";
+import Loader from "./Loader";
 
 const acceptWork = async (e, assignmentId) => {
   e.preventDefault(); 
@@ -43,6 +44,14 @@ function Showwork() {
   const [assignments, setAssignments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000); // Adjust the loading time as needed
+
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     async function fetchData() {
@@ -86,7 +95,7 @@ function Showwork() {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div><Loader /></div>;
   }
 
   if (error) {
@@ -120,7 +129,7 @@ function Showwork() {
                   Accept
                 </a>
                 <Link
-                  to={`/feedback?a=${assignment._id}`}
+                  to=""
                   className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
                   Reject
                 </Link>

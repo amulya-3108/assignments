@@ -6,12 +6,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import config from "../config";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faListCheck,
-  faStar,
-  faDollar,
-} from "@fortawesome/free-solid-svg-icons";
+import Loader from "./Loader";
 
 function Acceptedassignments() {
   const [assignments, setAssignments] = useState([]);
@@ -28,7 +23,7 @@ function Acceptedassignments() {
           { headers: { Authorization: token } }
         );
         if (response.status === 200) {
-            setAssignments(response.data.data);
+          setAssignments(response.data.data);
         } else {
           console.error("Failed to fetch data:", response);
           setError("Failed to fetch assignments");
@@ -48,8 +43,16 @@ function Acceptedassignments() {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000); // Adjust the loading time as needed
+
+    return () => clearTimeout(timer);
+  }, []);
+
   if (loading) {
-    return <div>Loading...</div>;
+    return <div><Loader /></div>;
   }
 
   if (error) {
@@ -77,6 +80,14 @@ function Acceptedassignments() {
               <p className="text-xl font-semibold text-blue-800 p-2">
                 Price: {assignment.solverPrice}
               </p>
+              <div className="flex justify-around items-center mt-5">
+                <a
+                  href={`${config.baseURL}uploads/${assignment.files}`}
+                  className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                  download>
+                  Download
+                </a>
+              </div>
             </div>
           ))}
         </div>

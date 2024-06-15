@@ -7,6 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import config from "../config";
 import { Link } from "react-router-dom";
+import Loader from "./Loader";
 
 function Viewassignments() {
   const [assignments, setAssignments] = useState([]);
@@ -46,8 +47,16 @@ function Viewassignments() {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000); // Adjust the loading time as needed
+
+    return () => clearTimeout(timer);
+  }, []);
+  
   if (loading) {
-    return <div>Loading...</div>;
+    return <div><Loader/></div>;
   }
 
   if (error) {

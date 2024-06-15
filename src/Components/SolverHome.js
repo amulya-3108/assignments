@@ -12,6 +12,7 @@ import {
   faStar,
   faDollar,
 } from "@fortawesome/free-solid-svg-icons";
+import Loader from "./Loader";
 
 function Solverhome() {
   const [assignments, setAssignments] = useState([]);
@@ -79,8 +80,16 @@ function Solverhome() {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000); // Adjust the loading time as needed
+
+    return () => clearTimeout(timer);
+  }, []);
+  
   if (loading) {
-    return <div>Loading...</div>;
+    return <div><Loader/></div>;
   }
 
   if (error) {
