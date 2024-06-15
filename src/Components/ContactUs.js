@@ -66,6 +66,7 @@ function Contactus() {
                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2895.8395533755834!2d-80.52493962435342!3d43.463946764651446!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x882bf412ee338bad%3A0xd8f15509f290352!2sWaterloo%20Public%20Square!5e0!3m2!1sen!2sca!4v1718303880685!5m2!1sen!2sca"
                   width="600"
                   height="450"
+                  title="Location"
                   style={{ border: 0 }}
                   allowFullScreen=""
                   loading="lazy"

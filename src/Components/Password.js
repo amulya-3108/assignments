@@ -17,8 +17,7 @@ function Password() {
   }, []);
   async function passwordData(e) {
     e.preventDefault();
-
-    setError(""); // Clear any previous error messages
+    setError("");
     try {
       const response = await axios.post(
         `${config.baseURL}password/login`,

@@ -1,20 +1,7 @@
-// import React from "react";
-// import { Navigate } from "react-router-dom";
-// import { isAuthenticated } from "./Auth";
-
-// function ProtectedRoute({ children }) {
-//   if (!isAuthenticated()) {
-//     return <Navigate to="/" />;
-//   }
-
-//   return children;
-// }
-
-// export default ProtectedRoute;
-
 import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { isAuthenticated, getUserRole } from "./Auth";
+import Loader from "./Components/Loader";
 
 function ProtectedRoute({ children, requiredRole }) {
   const [loading, setLoading] = useState(true);
@@ -28,8 +15,16 @@ function ProtectedRoute({ children, requiredRole }) {
     setLoading(false);
   }, []);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+  
   if (loading) {
-    return <div>Loading...</div>; // Or a loading spinner
+    return <div><Loader/></div>;
   }
 
   if (!isAuthenticated()) {
@@ -37,7 +32,6 @@ function ProtectedRoute({ children, requiredRole }) {
   }
 
   if (requiredRole && userRole !== requiredRole) {
-    // Redirect to appropriate route based on user role
     return <Navigate to={`/${userRole === "student" ? "home" : "solverhome"}`} />;
   }
 

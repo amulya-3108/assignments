@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import config from '../config';
+import Loader from "./Loader";
 
 function Homepage() {
   const [data, setData] = useState({
@@ -28,8 +29,15 @@ function Homepage() {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
   if (loading) {
-    return <div>Loading...</div>;
+    return <div><Loader/></div>;
   }
 
   if (error) {

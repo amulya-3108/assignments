@@ -7,7 +7,8 @@ import axios from "axios";
 function Header() {
   const [isActive, setActive] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isAssignmentsDropdownOpen, setAssignmentsDropdownOpen] = useState(false);
+  const [isAssignmentsDropdownOpen, setAssignmentsDropdownOpen] =
+    useState(false);
   const [isProfileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [role, setRole] = useState(null);
   const navigate = useNavigate();
@@ -28,15 +29,15 @@ function Header() {
             const { role } = response.data.data;
             setRole(role);
             console.log("Role set to:", role);
-            setIsLoggedIn(true); // Update isLoggedIn state when user is logged in
+            setIsLoggedIn(true);
           }
         })
         .catch((error) => {
           console.error("Error fetching user details", error);
-          setIsLoggedIn(false); // Update isLoggedIn state when user is not logged in
+          setIsLoggedIn(false);
         });
     } else {
-      setIsLoggedIn(false); // Update isLoggedIn state when there's no token
+      setIsLoggedIn(false);
     }
   }, []);
 
@@ -214,10 +215,25 @@ function Header() {
                     Home
                   </Link>
                   <Link
-                    to="/studentAssignments"
+                    to="/addassignments"
                     className="px-6 py-2 text-center font-bold">
-                    Assignments
+                    Accepted Assignment
                   </Link>
+                  <Link
+                    to="/viewassignments"
+                    className="px-6 py-2 text-center font-bold">
+                    View Assignment
+                  </Link>
+                  <Link
+                    to="/changepassword"
+                    className="px-6 py-2 text-center font-bold">
+                    Change Password
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="px-6 py-2 text-center font-bold">
+                    Logout
+                  </button>
                 </>
               )}
               {role === "solver" && (
@@ -228,25 +244,27 @@ function Header() {
                     Home
                   </Link>
                   <Link
-                    to="/addassignments"
+                    to="/acceptedassignments"
                     className="px-6 py-2 text-center font-bold">
-                    Add Assignment
+                    Accepted Assignment
                   </Link>
                   <Link
-                    to="/viewassignments"
+                    to="/showwork"
                     className="px-6 py-2 text-center font-bold">
                     View Assignment
                   </Link>
+                  <Link
+                    to="/changepassword"
+                    className="px-6 py-2 text-center font-bold">
+                    Change Password
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="px-6 py-2 text-center font-bold">
+                    Logout
+                  </button>
                 </>
               )}
-              <Link to="/profile" className="px-6 py-2 text-center font-bold">
-                Profile
-              </Link>
-              <button
-                onClick={handleLogout}
-                className="px-6 py-2 text-center font-bold">
-                Logout
-              </button>
             </>
           ) : (
             <>

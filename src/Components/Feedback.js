@@ -17,15 +17,15 @@ function useQuery() {
 
 function Feedback() {
   const query = useQuery();
-  const id = query.get('a'); // Extract the 'a' query parameter
+  const id = query.get('a');
 
   const [performanceRating, setFeedback] = useState(false);
   const [Feedbackmessage, setMessage] = useState("");
   const [error, setError] = useState({});
-  const [submittedFeedback, setSubmittedFeedback] = useState("")
+  const setSubmittedFeedback = useState("");
 
   useEffect(() => {
-    console.log("Assignment ID:", id); // This should log the ID
+    console.log("Assignment ID:", id);
   }, [id]);
 
   const handleSubmit = async (e) => {

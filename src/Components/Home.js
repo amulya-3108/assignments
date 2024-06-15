@@ -6,9 +6,9 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import config from "../config";
-import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faListCheck, faDollar } from "@fortawesome/free-solid-svg-icons";
+import Loader from "./Loader";
 
 function Home() {
   const [assignments, setAssignments] = useState([]);
@@ -24,7 +24,7 @@ function Home() {
           { headers: { Authorization: token } }
         );
         if (response.status === 200) {
-          const data = response.data.data; // Extract the array from the data property
+          const data = response.data.data;
           if (Array.isArray(data)) {
             setAssignments(data);
             // toast.success("Assignments loaded successfully!");
@@ -48,8 +48,15 @@ function Home() {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
   if (loading) {
-    return <div>Loading...</div>;
+    return <div><Loader/></div>;
   }
 
   if (error) {
@@ -90,7 +97,6 @@ function Home() {
               <div className="text-lg font-semibold">Total Cost</div>
             </div>
           </div>
-          {/* Add more counters as needed */}
         </div>
         {/* <h1 className="text-4xl font-semibold text-center my-5">View Work</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mx-24">
@@ -130,10 +136,10 @@ function Home() {
       <Footer />
     </div>
   );
-  function formatDeadline(deadline) {
-    const date = new Date(deadline);
-    return date.toISOString().split("T")[0];
-  }
+  // function formatDeadline(deadline) {
+  //   const date = new Date(deadline);
+  //   return date.toISOString().split("T")[0];
+  // }
 }
 
 export default Home;

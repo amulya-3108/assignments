@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faFacebook,
-  faTwitter,
   faInstagram,
   faLinkedin
 } from "@fortawesome/free-brands-svg-icons";
@@ -72,9 +71,6 @@ function Footer() {
               <Link to="/facebook" className="hover:text-blue-500">
                 <FontAwesomeIcon icon={faFacebook} size="2x" />
               </Link>
-              {/* <Link to="/twitter" className="hover:text-blue-400">
-                <FontAwesomeIcon icon={faTwitter} size="2x" />
-              </Link> */}
               <Link to="/instagram" className="hover:text-pink-500">
                 <FontAwesomeIcon icon={faInstagram} size="2x" />
               </Link>

@@ -20,7 +20,7 @@ function Signin() {
   const fileInputRef = useRef(null);
   const [error, setError] = useState({});
   const handleFileSelect = (event) => {
-    setFiles(event.files[0]); // Assuming you only want to select the first file
+    setFiles(event.files[0]);
   };
   async function signupData(e) {
     e.preventDefault();
@@ -115,13 +115,13 @@ function Signin() {
             <Link
               className="flex bg-white items-center justify-center w-full font-bold py-2 px-4 text-lg rounded-lg focus:outline-none focus:shadow-outline border-2 border-blue-600 mb-5"
               type="button">
-              <img src="../images/icons8-google.svg" />
+              <img src="../images/icons8-google.svg" alt="google"/>
               <span className="ml-2">Continue with Google</span>
             </Link>
             <Link
               className="flex bg-white items-center justify-center w-full font-bold py-2 px-4 text-lg rounded-lg focus:outline-none focus:shadow-outline border-2 border-blue-600"
               type="button">
-              <img src="../images/icons8-apple.svg" className="mr-2" />
+              <img src="../images/icons8-apple.svg" alt="apple" className="mr-2" />
               <span className="ml-1">Continue with Apple</span>
             </Link>
           </div>

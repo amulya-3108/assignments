@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import {useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -9,12 +9,11 @@ function Forgot() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
-//   let notify;
   async function forgotData(e) {
     console.log(email);
     e.preventDefault();
 
-    setError(""); // Clear any previous error messages
+    setError("");
     try {
       const response = await axios.post(
         `${config.baseURL}forgotPassword`,
@@ -25,7 +24,7 @@ function Forgot() {
         toast.success("Password sent in Email");
         setTimeout(() => {
             navigate("/login");
-          }, 5000);
+          }, 2000);
       }
     } catch (error) {
       if (error.response && error.response.status === 401) {

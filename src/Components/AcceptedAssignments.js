@@ -46,7 +46,7 @@ function Acceptedassignments() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 2000); // Adjust the loading time as needed
+    }, 2000);
 
     return () => clearTimeout(timer);
   }, []);
@@ -97,11 +97,10 @@ function Acceptedassignments() {
     </div>
   );
   function formatDeadline(deadline) {
-    if (!deadline) return "No deadline"; // Handle case where deadline is not provided or invalid
-
+    if (!deadline) return "No deadline";
     const date = new Date(deadline);
     if (isNaN(date.getTime())) {
-      return "Invalid deadline"; // Handle case where deadline is not a valid date
+      return "Invalid deadline";
     }
 
     return date.toISOString().split("T")[0];

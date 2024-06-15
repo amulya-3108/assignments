@@ -99,7 +99,7 @@ function App() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 2000); // Adjust the loading time as needed
+    }, 2000);
 
     return () => clearTimeout(timer);
   }, []);

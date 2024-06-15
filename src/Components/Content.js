@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React from "react";
 import "../index.css";
 import Header from "./Header";
 import Footer from "./Footer";
@@ -11,7 +11,7 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/free-mode";
 import { FreeMode, Pagination } from "swiper/modules";
-import { motion, animate } from "framer-motion";
+import { motion } from "framer-motion";
 
 function Content() {
   let settings = {
@@ -43,60 +43,10 @@ function Content() {
     ],
   };
 
-  //   const audioRef = useRef(null);
-  //   const [audioEnabled, setAudioEnabled] = useState(false);
-  //   const [isPlaying, setIsPlaying] = useState(false);
-
-  //   const handleEnableAudio = () => {
-  //     setAudioEnabled(true);
-  // if (audioRef.current) {
-  //   audioRef.current
-  //     .play()
-  //     .then(() => {
-  //       audioRef.current.pause();
-  //       audioRef.current.currentTime = 0;
-  //     })
-  //     .catch((error) => {
-  //       console.error("Failed to play audio:", error);
-  //     });
-  // }
-  //     if (audioRef.current) {
-  //         audioRef.current
-  //           .play()
-  //           .then(() => {
-  //             // Audio played successfully
-  //             audioEnabled(true);
-  //           })
-  //           .catch((error) => {
-  //             console.error("Failed to play audio:", error);
-  //           });
-  //       }
-  //   };
-
-  //   const handleMouseEnter = () => {
-  //     if (audioRef.current) {
-  //       audioRef.current.play();
-  //     }
-  //   };
-
-  //   const handleMouseLeave = () => {
-  //     if (audioRef.current) {
-  //       audioRef.current.pause();
-  //       audioRef.current.currentTime = 0; // Reset to start
-  //     }
-  //   };
-
-  //   const handleClick = () => {
-  //     if (!audioEnabled) {
-  //       handleEnableAudio();
-  //     }
-  //   };
-
   return (
     <div>
       <Header />
       <div className="flex items-center justify-center flex-col">
-        {/* <audio ref={audioRef} src="../images/notification-8-158195.mp3"  /> */}
         <Swiper
           breakpoints={{
             340: {
@@ -118,13 +68,6 @@ function Content() {
             <SwiperSlide key={item.name}>
               <motion.div
                 className="flex flex-col gap-6 mt-5 mb-10 group relative shadow-lg rounded-xl px-6 py-8 h-[250px] w-[215px] lg:h-[500px] lg:w-[380px] overflow-hidden cursor-pointer"
-                // animate={{ rotate: 360 }}
-                // transition={{
-                //   repeat: Infinity,
-                //   duration: 5,
-                //   ease: "linear",
-                //   repeatDelay: 5,
-                // }}
                 animate={{ x: [-100, 0] }}
                 transition={{
                   type: "spring",
@@ -132,9 +75,6 @@ function Content() {
                   duration: 5,
                   ease: "linear",
                 }}
-                // onMouseEnter={handleMouseEnter}
-                // onClick={handleClick}
-                // onMouseLeave={handleMouseLeave}
               >
                 <div
                   className="absolute inset-0 bg-cover bg-center blur-sm"
@@ -146,14 +86,6 @@ function Content() {
                   initial={{ opacity: 0 }}
                   whileHover={{ opacity: 0 }}
                   transition={{ duration: 0.3 }}>
-                  {/* {!audioEnabled && ( */}
-                  <button
-                    className="px-4 py-2 bg-blue-500 text-white rounded"
-                    //   onClick={handleEnableAudio}
-                  >
-                    Enable Audio
-                  </button>
-                  {/* )} */}
                 </motion.div>
                 <div className="relative flex flex-col gap-3 pt-64">
                   <h1 className="text-xl lg:text-3xl text-black font-bold">
@@ -178,7 +110,7 @@ function Content() {
               <div className="h-56 rounded-t-xl bg-blue-600 flex justify-center items-center">
                 <img
                   src={d.img}
-                  alt="image"
+                  alt="sliding images"
                   className="h-44 w-44 rounded-full my-5"
                 />
               </div>
@@ -190,15 +122,6 @@ function Content() {
           ))}
         </Slider>
       </div>
-
-      {/* <motion.div
-        drag
-        dragTransition={{
-          min: 0,
-          max: 100,
-          bounceStiffness: 100
-        }}  
-        className="py-10 shadow-md"> */}
       <div className="pt-10">
         <div className="max-w-6xl mx-auto px-20">
           <h1 className="text-5xl font-semibold mb-9 text-center">
@@ -235,7 +158,6 @@ function Content() {
           </div>
         </div>
       </div>
-      {/* </motion.div> */}
 
       <div className="container mx-auto p-5">
         <div className="p-6">

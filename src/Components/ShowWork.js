@@ -48,7 +48,7 @@ function Showwork() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 2000); // Adjust the loading time as needed
+    }, 2000);
 
     return () => clearTimeout(timer);
   }, []);
@@ -122,12 +122,11 @@ function Showwork() {
                 Price: {assignment.solverPrice}
               </p>
               <div className="flex justify-around items-center mt-5">
-                <a
-                  href="#"
+                <button
                   onClick={(e) => acceptWork(e, assignment._id)}
                   className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
                   Accept
-                </a>
+                </button>
                 <Link
                   to=""
                   className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">

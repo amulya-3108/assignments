@@ -24,8 +24,6 @@ function Solverhome() {
     async function fetchData() {
       try {
         const token = localStorage.getItem("authToken");
-
-        // Fetch total assignments
         const responseTotal = await axios.get(
           `${config.baseURL}showAssignments`,
           { headers: { Authorization: token } }
@@ -43,7 +41,6 @@ function Solverhome() {
           }
         }
 
-        // Fetch upcoming assignments
         const responseUpcoming = await axios.get(
           `${config.baseURL}doneAssignment`,
           { headers: { Authorization: token } }
@@ -54,7 +51,7 @@ function Solverhome() {
             const filteredUpcoming = dataUpcoming
               .filter((assignment) => {
                 const deadlineDate = new Date(assignment.deadlineDate);
-                return deadlineDate >= new Date(); // Only future deadlines
+                return deadlineDate >= new Date();
               })
             setUpcomingAssignments(filteredUpcoming);
           } else {
@@ -83,7 +80,7 @@ function Solverhome() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 2000); // Adjust the loading time as needed
+    }, 2000);
 
     return () => clearTimeout(timer);
   }, []);

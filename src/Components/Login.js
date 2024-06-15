@@ -4,19 +4,19 @@ import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import config from "../config"; 
+import Loader from "./Loader";
 
 function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
+  const phone = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   async function loginData(e) {
-    console.log(email);
     e.preventDefault();
 
     setError("");
-    setLoading(true);
+    
     try {
       const response = await axios.post(
         `${config.baseURL}email/login`,
@@ -34,6 +34,16 @@ function Login() {
         toast.error("Something went wrong try again!");
       }
     }
+  }
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000); 
+
+    return () => clearTimeout(timer);
+  }, []);
+  if (loading) {
+    return <div><Loader/></div>;
   }
   return (
     <div className="container mx-auto w-full md:w-1/3 justify-around items-center mt-20 mb-20 rounded-2xl md:border">
@@ -71,20 +81,20 @@ function Login() {
             <Link
               className="flex bg-white items-center justify-center w-full font-bold py-2 px-4 text-lg rounded-lg focus:outline-none focus:shadow-outline border-2 border-blue-600 mb-5"
               type="button">
-              <img src="../images/icons8-google.svg" />
+              <img src="../images/icons8-google.svg" alt="Google"/>
               <span className="ml-2">Continue with Google</span>
             </Link>
             <Link
               className="flex bg-white items-center justify-center w-full font-bold py-2 px-4 text-lg rounded-lg focus:outline-none focus:shadow-outline border-2 border-blue-600"
               type="button">
-              <img src="../images/icons8-apple.svg" className="mr-2" />
+              <img src="../images/icons8-apple.svg" alt="Apple" className="mr-2" />
               <span className="ml-1">Continue with Apple</span>
             </Link>
           </div>
           <div className="flex items-center justify-between mb-4">
             <div className="border-t border-black flex-grow h-0.5 mr-3 ml-20 mt-2"></div>
             <Link to="/signin" className="text-blue-900 text-xl font-semibold">
-              Don't have an account? Sign Up
+            Don't have an account? Sign Up
             </Link>
             <div className="border-t border-black flex-grow h-0.5 ml-3 mr-20 mt-2"></div>
           </div>
