@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import "../index.css";
 import Header from "./Header";
 import Footer from "./Footer";
@@ -7,26 +7,30 @@ import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import config from "../config";
 import Loader from "./Loader";
-import { FileUpload } from "primereact/fileupload";
+import ReactPaginate from "react-paginate";
 
 function Acceptedassignments() {
   const [assignments, setAssignments] = useState([]);
+  const [filteredAssignments, setFilteredAssignments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [uploadVisible, setUploadVisible] = useState({});
-  const fileInputRefs = useRef([]);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [uploadingAssignmentId, setUploadingAssignmentId] = useState("");
+  const assignmentsPerPage = 10;
 
   useEffect(() => {
     async function fetchData() {
       try {
         const token = localStorage.getItem("authToken");
-
         const response = await axios.get(
           `${config.baseURL}showAssignmentsByAcc`,
           { headers: { Authorization: token } }
         );
         if (response.status === 200) {
-          setAssignments(response.data.data);
+          let data = response.data.data;
+          setAssignments(data);
+          setFilteredAssignments(data);
         } else {
           console.error("Failed to fetch data:", response);
           setError("Failed to fetch assignments");
@@ -47,26 +51,82 @@ function Acceptedassignments() {
   }, []);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 2000);
+    const handleSearch = () => {
+      const filtered = assignments.filter((assignment) => {
+        const searchTerm = searchQuery.toLowerCase();
+        const priceString =
+          assignment.solverPrice !== undefined
+            ? assignment.solverPrice.toString()
+            : "";
+        return (
+          assignment.assignmentName.toLowerCase().includes(searchTerm) ||
+          priceString.includes(searchTerm)
+        );
+      });
+      setFilteredAssignments(filtered);
+      setCurrentPage(0);
+    };
 
-    return () => clearTimeout(timer);
-  }, []);
+    handleSearch();
+  }, [searchQuery, assignments]);
 
-  const handleFileSelect = (e, assignmentId) => {
-    console.log(`Selected files for assignment ${assignmentId}:`, e.files);
+  const handlePageClick = (event) => {
+    setCurrentPage(event.selected);
   };
 
-  const toggleUploadVisibility = (assignmentId) => {
-    setUploadVisible((prev) => ({
-      ...prev,
-      [assignmentId]: !prev[assignmentId],
-    }));
+  const indexOfLastAssignment = (currentPage + 1) * assignmentsPerPage;
+  const indexOfFirstAssignment = indexOfLastAssignment - assignmentsPerPage;
+  const currentAssignments = filteredAssignments.slice(
+    indexOfFirstAssignment,
+    indexOfLastAssignment
+  );
+
+  const toggleFileInput = (assignmentId) => {
+    if (uploadingAssignmentId === assignmentId) {
+      setUploadingAssignmentId("");
+    } else {
+      setUploadingAssignmentId(assignmentId);
+    }
+  };
+
+  const handleFileUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const token = localStorage.getItem("authToken");
+      const response = await axios.post(
+        `${config.baseURL}uploadFile/${uploadingAssignmentId}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: token,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        toast.success("File uploaded successfully!");
+        window.location.reload();
+      } else {
+        toast.error("Failed to upload file. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      toast.error("Failed to upload file. Please try again.");
+    }
   };
 
   if (loading) {
-    return <div><Loader /></div>;
+    return (
+      <div>
+        <Loader />
+      </div>
+    );
   }
 
   if (error) {
@@ -76,84 +136,99 @@ function Acceptedassignments() {
   return (
     <div>
       <Header />
-      <div className="container mx-auto mb-10">
-        <h1 className="text-4xl font-semibold text-center mt-5 mb-10">
+      <div className="container mx-auto my-10 relative">
+        <h1 className="text-4xl font-semibold text-center my-5">
           Accepted Work
         </h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mx-24">
-          {assignments.map((assignment, index) => (
-            <div
-              key={assignment._id}
-              className="bg-blue-100 p-6 rounded-lg shadow-lg h-auto w-full">
-              <p className="text-xl font-semibold text-blue-800 p-2">
-                Assignment Name: {assignment.assignmentName}
-              </p>
-              <p className="text-xl font-semibold text-blue-800 p-2">
-                Deadline: {formatDeadline(assignment.deadlineDate)}
-              </p>
-              <p className="text-xl font-semibold text-blue-800 p-2">
-                Price: {assignment.solverPrice}
-              </p>
-              <div className="flex justify-around items-center mt-5">
-                <a
-                  href={`${config.baseURL}uploads/${assignment.files}`}
-                  className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-                  download>
-                  Download
-                </a>
-                <button
-                  onClick={() => toggleUploadVisibility(assignment._id)}
-                  className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-                  Upload
-                </button>
-              </div>
-              {uploadVisible[assignment._id] && (
-                <div className="mt-4">
-                  <label className="block text-gray-700 text-lg font-bold mb-2">
-                    Upload Document
-                  </label>
-                  <div className="card">
-                    <FileUpload
-                      name="files"
-                      ref={(el) => (fileInputRefs.current[index] = el)}
-                      multiple
-                      accept="image/*"
-                      maxFileSize={1000000}
-                      emptyTemplate={
-                        <p className="m-3 text-gray-500 text-center py-4 border-dashed border-2 border-blue-500 rounded">
-                          Drag and drop files to here to upload.
-                        </p>
-                      }
-                      chooseOptions={{
-                        label: "Choose",
-                        icon: "pi pi-fw pi-plus",
-                        className:
-                          "p-button p-component m-3 w-20 h-8 bg-blue-600 rounded text-white hover:bg-blue-700",
-                      }}
-                      uploadOptions={{
-                        label: "Upload",
-                        icon: "pi pi-upload",
-                        className:
-                          "p-button p-component m-3 w-20 h-8 bg-green-600 rounded text-white hover:bg-green-700",
-                      }}
-                      cancelOptions={{
-                        label: "Cancel",
-                        icon: "pi pi-times",
-                        className:
-                          "p-button p-component m-3 w-20 h-8 bg-red-600 rounded text-white hover:bg-red-700",
-                      }}
-                      onSelect={(e) => handleFileSelect(e, assignment._id)}
-                    />
-                    {error && error.files && (
-                      <span className="text-red-500 text-sm mt-2">
-                        {error.files}
-                      </span>
+        <div className="absolute right-0 top-5 mt-5 mr-5">
+          <input
+            type="text"
+            placeholder="Search by assignment name or price..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="p-2 border border-gray-300 rounded-full w-full sm:w-96 focus:outline-none focus:border-blue-500"
+          />
+        </div>
+        <div className="mt-16 overflow-x-auto mx-20">
+          <table className="min-w-full bg-white border border-gray-200">
+            <thead>
+              <tr>
+                <th className="py-2 px-4 border border-gray-300">
+                  Assignment Name
+                </th>
+                <th className="py-2 px-4 border border-gray-300">Deadline</th>
+                <th className="py-2 px-4 border border-gray-300">Price</th>
+                <th className="py-2 px-4 border border-gray-300">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {currentAssignments.map((assignment) => (
+                <tr key={assignment._id} className="text-center">
+                  <td className="py-2 px-4 border border-gray-300">
+                    {assignment.assignmentName}
+                  </td>
+                  <td className="py-2 px-4 border border-gray-300">
+                    {formatDeadline(assignment.deadlineDate)}
+                  </td>
+                  <td className="py-2 px-4 border border-gray-300">
+                    {assignment.solverPrice}
+                  </td>
+                  <td className="py-2 px-4 border border-gray-300">
+                    <a
+                      href={`${config.baseURL}uploads/${assignment.files}`}
+                      className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mx-1"
+                      download>
+                      Download
+                    </a>
+                    <button
+                      className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mx-1"
+                      onClick={() => toggleFileInput(assignment._id)}>
+                      Upload
+                    </button>
+                    {uploadingAssignmentId === assignment._id && (
+                      <input
+                        type="file"
+                        onChange={handleFileUpload}
+                        className="block mt-2 mx-auto"
+                      />
                     )}
-                  </div>
-                </div>
-              )}
-            </div>
-          ))}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div className="flex justify-center mt-10">
+          <ReactPaginate
+            previousLabel={"Previous"}
+            nextLabel={"Next"}
+            breakLabel={"..."}
+            breakClassName={"break-me"}
+            pageCount={Math.ceil(
+              filteredAssignments.length / assignmentsPerPage
+            )}
+            marginPagesDisplayed={2}
+            pageRangeDisplayed={5}
+            onPageChange={handlePageClick}
+            containerClassName={"flex list-none p-0"}
+            subContainerClassName={"pages pagination"}
+            activeClassName={"activepage"}
+            pageClassName={"mx-1"}
+            pageLinkClassName={
+              "px-4 py-2 border border-gray-300 rounded-full hover:bg-gray-200"
+            }
+            previousClassName={"mx-1"}
+            previousLinkClassName={
+              "px-4 py-2 border border-gray-300 rounded-full hover:bg-gray-200"
+            }
+            nextClassName={"mx-1"}
+            nextLinkClassName={
+              "px-4 py-2 border border-gray-300 rounded-full hover:bg-gray-200"
+            }
+            breakLinkClassName={
+              "px-4 py-2 border border-gray-300 rounded-full hover:bg-gray-200"
+            }
+          />
         </div>
       </div>
       <ToastContainer />
@@ -162,12 +237,7 @@ function Acceptedassignments() {
   );
 
   function formatDeadline(deadline) {
-    if (!deadline) return "No deadline";
     const date = new Date(deadline);
-    if (isNaN(date.getTime())) {
-      return "Invalid deadline";
-    }
-
     return date.toISOString().split("T")[0];
   }
 }

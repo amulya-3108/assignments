@@ -9,6 +9,7 @@ import config from "../config";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faListCheck, faDollar } from "@fortawesome/free-solid-svg-icons";
 import Loader from "./Loader";
+import { Link } from "react-router-dom";
 
 function Home() {
   const [assignments, setAssignments] = useState([]);
@@ -55,8 +56,9 @@ function Home() {
 
     return () => clearTimeout(timer);
   }, []);
+
   if (loading) {
-    return <div><Loader/></div>;
+    return <div><Loader /></div>;
   }
 
   if (error) {
@@ -67,6 +69,9 @@ function Home() {
   const totalCost =
     assignments.reduce((sum, assignment) => sum + (assignment.rating || 0), 0) /
     totalAssignments;
+    
+  const sortedAssignments = [...assignments].sort((a, b) => new Date(b.uploadDate) - new Date(a.uploadDate));
+  const recentAssignments = sortedAssignments.slice(0, 5);
 
   return (
     <div>
@@ -98,9 +103,10 @@ function Home() {
             </div>
           </div>
         </div>
-        {/* <h1 className="text-4xl font-semibold text-center my-5">View Work</h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mx-24">
-          {assignments.map((assignment, index) => (
+
+        <h1 className="text-4xl font-semibold text-center my-5">Latest Work</h1>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 mx-20">
+          {recentAssignments.map((assignment, index) => (
             <div
               key={index}
               className="bg-blue-100 p-6 rounded-lg shadow-lg h-auto w-full">
@@ -113,6 +119,17 @@ function Home() {
               <p className="text-xl font-semibold text-blue-800 p-2">
                 Price: {assignment.price}
               </p>
+              {assignment.performanceRating !== "-" && (
+                <p className="text-xl font-semibold text-blue-800 p-2">
+                  Rating: {assignment.performanceRating}
+                </p>
+              )}
+              {assignment.FeedbackMessage !== "-" && (
+                <p className="text-xl font-semibold text-blue-800 p-2">
+                  <span className="inline-block mr-2">Feedback:</span>
+                  <span className="inline-block" dangerouslySetInnerHTML={{ __html: assignment.FeedbackMessage }} />
+                </p>
+              )}
               {assignment.uploadedFiles !== "-" && (
                 <div className="flex justify-around items-center mt-5">
                   <a
@@ -122,7 +139,7 @@ function Home() {
                     Download
                   </a>
                   <Link
-                    to="/feedback"
+                    to={`/feedback?a=${assignment._id}`}
                     className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
                     Feedback
                   </Link>
@@ -130,16 +147,17 @@ function Home() {
               )}
             </div>
           ))}
-        </div> */}
+        </div>
       </div>
       <ToastContainer />
       <Footer />
     </div>
   );
-  // function formatDeadline(deadline) {
-  //   const date = new Date(deadline);
-  //   return date.toISOString().split("T")[0];
-  // }
+
+  function formatDeadline(deadline) {
+    const date = new Date(deadline);
+    return date.toISOString().split("T")[0];
+  }
 }
 
 export default Home;
