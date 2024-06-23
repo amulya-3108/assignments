@@ -28,7 +28,7 @@ function Header() {
           if (response.status === 200) {
             const { role } = response.data.data;
             setRole(role);
-            console.log("Role set to:", role);
+            // console.log("Role set to:", role);
             setIsLoggedIn(true);
           }
         })
@@ -93,7 +93,7 @@ function Header() {
                   onMouseEnter={() => setProfileDropdownOpen(true)}
                   onMouseLeave={() => setProfileDropdownOpen(false)}>
                   <Link
-                    to="/profile"
+                    to=""
                     className="px-6 py-2 text-center font-bold">
                     Profile
                   </Link>
@@ -105,9 +105,9 @@ function Header() {
                         Change Password
                       </Link>
                       <Link
-                        to="/settings"
+                        to="/manageprofile"
                         className="block px-4 py-2 text-black hover:bg-gray-200">
-                        Settings
+                        Manage Profile
                       </Link>
                     </div>
                   )}
@@ -157,7 +157,7 @@ function Header() {
                   onMouseEnter={() => setProfileDropdownOpen(true)}
                   onMouseLeave={() => setProfileDropdownOpen(false)}>
                   <Link
-                    to="/profile"
+                    to=""
                     className="px-6 py-2 text-center font-bold">
                     Profile
                   </Link>
@@ -169,9 +169,9 @@ function Header() {
                         Change Password
                       </Link>
                       <Link
-                        to="/settings"
+                        to="/manageprofile"
                         className="block px-4 py-2 text-black hover:bg-gray-200">
-                        Settings
+                        Manage Profile
                       </Link>
                     </div>
                   )}

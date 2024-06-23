@@ -8,11 +8,14 @@ import axios from "axios";
 import config from "../config";
 import { Link } from "react-router-dom";
 import Loader from "./Loader";
+import ReactPaginate from "react-paginate";
 
 function Viewassignments() {
   const [assignments, setAssignments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(0); // Page index starts from 0
+  const assignmentsPerPage = 10;
 
   useEffect(() => {
     async function fetchData() {
@@ -23,10 +26,9 @@ function Viewassignments() {
           { headers: { Authorization: token } }
         );
         if (response.status === 200) {
-          const data = response.data.data; // Extract the array from the data property
+          const data = response.data.data;
           if (Array.isArray(data)) {
             setAssignments(data);
-            // toast.success("Assignments loaded successfully!");
           } else {
             console.error("Unexpected response format:", data);
             setAssignments([]);
@@ -54,9 +56,17 @@ function Viewassignments() {
 
     return () => clearTimeout(timer);
   }, []);
-  
+
+  const handlePageClick = (event) => {
+    setCurrentPage(event.selected);
+  };
+
+  const indexOfLastAssignment = (currentPage + 1) * assignmentsPerPage;
+  const indexOfFirstAssignment = indexOfLastAssignment - assignmentsPerPage;
+  const currentAssignments = assignments.slice(indexOfFirstAssignment, indexOfLastAssignment);
+
   if (loading) {
-    return <div><Loader/></div>;
+    return <div><Loader /></div>;
   }
 
   if (error) {
@@ -69,7 +79,7 @@ function Viewassignments() {
       <div className="container mx-auto my-10">
         <h1 className="text-4xl font-semibold text-center my-5">View Work</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 mx-20">
-          {assignments.map((assignment, index) => (
+          {currentAssignments.map((assignment, index) => (
             <div
               key={index}
               className="bg-blue-100 p-6 rounded-lg shadow-lg h-auto w-full">
@@ -89,8 +99,8 @@ function Viewassignments() {
               )}
               {assignment.FeedbackMessage !== "-" && (
                 <p className="text-xl font-semibold text-blue-800 p-2">
-                  <span style={{ display: 'inline-block', marginRight: '8px' }}>Feedback:</span>
-                  <span style={{ display: 'inline-block' }} dangerouslySetInnerHTML={{ __html: assignment.FeedbackMessage }} />
+                  <span className="inline-block mr-2">Feedback:</span>
+                  <span className="inline-block" dangerouslySetInnerHTML={{ __html: assignment.FeedbackMessage }} />
                 </p>
               )}
               {assignment.uploadedFiles !== "-" && (
@@ -111,11 +121,34 @@ function Viewassignments() {
             </div>
           ))}
         </div>
+        <div className="flex justify-center mt-10">
+          <ReactPaginate
+            previousLabel={"Previous"}
+            nextLabel={"Next"}
+            breakLabel={"..."}
+            breakClassName={"break-me"}
+            pageCount={Math.ceil(assignments.length / assignmentsPerPage)}
+            marginPagesDisplayed={2}
+            pageRangeDisplayed={5}
+            onPageChange={handlePageClick}
+            containerClassName={"flex list-none p-0"}
+            subContainerClassName={"pages pagination"}
+            activeClassName={"activepage"}
+            pageClassName={"mx-1"}
+            pageLinkClassName={"px-4 py-2 border border-gray-300 rounded-full hover:bg-gray-200"}
+            previousClassName={"mx-1"}
+            previousLinkClassName={"px-4 py-2 border border-gray-300 rounded-full hover:bg-gray-200"}
+            nextClassName={"mx-1"}
+            nextLinkClassName={"px-4 py-2 border border-gray-300 rounded-full hover:bg-gray-200"}
+            breakLinkClassName={"px-4 py-2 border border-gray-300 rounded-full hover:bg-gray-200"}
+          />
+        </div>
       </div>
       <ToastContainer />
       <Footer />
     </div>
   );
+
   function formatDeadline(deadline) {
     const date = new Date(deadline);
     return date.toISOString().split("T")[0];

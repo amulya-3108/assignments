@@ -92,6 +92,7 @@ import Thankyou from "./Components/Thankyou";
 import Aboutus from "./Components/AboutUs";
 import Contactus from "./Components/ContactUs";
 import Privacypolicy from "./Components/PrivacyPolicy";
+import Manageprofile from "./Components/ManageProfile";
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -128,6 +129,7 @@ function App() {
           <Route path="/feedback" element={<ProtectedRoute requiredRole="student"><Feedback /></ProtectedRoute>} />
           <Route path="/showwork" element={<ProtectedRoute requiredRole="solver"><Showwork /></ProtectedRoute>} />
           <Route path="/acceptedassignments" element={<ProtectedRoute requiredRole="solver"><Acceptedassignments /></ProtectedRoute>} />
+          <Route path="/manageprofile" element={<ProtectedRoute><Manageprofile /></ProtectedRoute>} />
 
           <Route path="/aboutus" element={<Aboutus />} />
           <Route path="/contactus" element={<Contactus />} />

@@ -22,3 +22,10 @@
 .dshd{
   filter: drop-shadow(1px 1px 7px blue);
 }  
+
+.activepage > a {
+  background-color: #1e40af;
+  color: white;
+  border-radius: 9999px;
+  border: none;
+}
