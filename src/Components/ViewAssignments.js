@@ -1,186 +1,155 @@
-import React, { useEffect, useState } from "react";
-import "../index.css";
-import Header from "./Header";
-import Footer from "./Footer";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import config from "../config";
 import { Link } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Loader from "./Loader";
+import Header from "./Header";
+import Footer from "./Footer";
 import ReactPaginate from "react-paginate";
 
 function Viewassignments() {
   const [assignments, setAssignments] = useState([]);
-  const [filteredAssignments, setFilteredAssignments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const assignmentsPerPage = 10;
+  const token = localStorage.getItem("authToken");
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const token = localStorage.getItem("authToken");
-        const response = await axios.get(
-          `${config.baseURL}showstudAssignments`,
-          { headers: { Authorization: token } }
-        );
-        if (response.status === 200) {
-          let data = response.data.data;
-          if (Array.isArray(data)) {
-            data = data.sort(
-              (a, b) => new Date(b.uploadDate) - new Date(a.uploadDate)
-            );
-            setAssignments(data);
-            setFilteredAssignments(data);
-          } else {
-            console.error("Unexpected response format:", data);
-            setAssignments([]);
-          }
-        }
-      } catch (error) {
-        if (error.response && error.response.status === 401) {
-          toast.error("Failed to load assignments");
-        } else {
-          toast.error("Something went wrong, try again!");
-        }
-        setError(error);
-      } finally {
-        setLoading(false);
+  const fetchAssignments = useCallback(async (page) => {
+    try {
+      const response = await axios.get(
+        `${config.baseURL}showstudAssignments?page=${page}&limit=${assignmentsPerPage}`,
+        { headers: { Authorization: token } }
+      );
+      if (response.status === 200) {
+        const { data, totalPages } = response.data;
+        setAssignments(data);
+        setTotalPages(totalPages);
       }
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        toast.error("Failed to load assignments");
+      } else {
+        toast.error("Something went wrong, try again!");
+      }
+      setError(error);
+    } finally {
+      setLoading(false);
     }
-
-    fetchData();
-  }, []);
+  }, [assignmentsPerPage, token]);
 
   useEffect(() => {
-    const handleSearch = () => {
-      const filtered = assignments.filter((assignment) => {
-        const searchTerm = searchQuery.toLowerCase();
-        return (
-          assignment.assignmentName.toLowerCase().includes(searchTerm) ||
-          assignment.price.toString().includes(searchTerm)
-        );
-      });
-      setFilteredAssignments(filtered);
-      setCurrentPage(0);
-    };
+    fetchAssignments(currentPage);
+  }, [currentPage, fetchAssignments]);
 
-    handleSearch();
-  }, [searchQuery, assignments]);
-
-  const handlePageClick = (event) => {
-    setCurrentPage(event.selected);
+  const handlePageClick = (data) => {
+    const selectedPage = data.selected + 1;
+    setCurrentPage(selectedPage);
   };
 
-  const indexOfLastAssignment = (currentPage + 1) * assignmentsPerPage;
-  const indexOfFirstAssignment = indexOfLastAssignment - assignmentsPerPage;
-  const currentAssignments = filteredAssignments.slice(
-    indexOfFirstAssignment,
-    indexOfLastAssignment
-  );
+  const renderAssignments = () => {
+    if (loading) {
+      return <Loader />;
+    }
 
-  if (loading) {
+    if (error) {
+      return <div>{error.message}</div>;
+    }
+
+    if (assignments.length === 0) {
+      return <div>No assignments found.</div>;
+    }
+
     return (
-      <div>
-        <Loader />
+      <div className="mt-16 overflow-x-auto mx-20">
+        <table className="min-w-full bg-white border border-gray-200">
+          <thead>
+            <tr>
+              <th className="py-2 px-4 border border-gray-300">Assignment Name</th>
+              <th className="py-2 px-4 border border-gray-300">Deadline</th>
+              <th className="py-2 px-4 border border-gray-300">Price</th>
+              <th className="py-2 px-4 border border-gray-300">Rating</th>
+              <th className="py-2 px-4 border border-gray-300">Feedback</th>
+              <th className="py-2 px-4 border border-gray-300">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {assignments.map((assignment, index) => (
+              <tr key={index} className="text-center">
+                <td className="py-2 px-4 border border-gray-300">
+                  {assignment.assignmentName}
+                </td>
+                <td className="py-2 px-4 border border-gray-300">
+                  {formatDeadline(assignment.deadlineDate)}
+                </td>
+                <td className="py-2 px-4 border border-gray-300">
+                  {assignment.price}
+                </td>
+                <td className="py-2 px-4 border border-gray-300">
+                  {assignment.performanceRating !== "-" ? assignment.performanceRating : "N/A"}
+                </td>
+                <td className="py-2 px-4 border border-gray-300">
+                  {assignment.FeedbackMessage !== "-" ? (
+                    <span
+                      dangerouslySetInnerHTML={{
+                        __html: assignment.FeedbackMessage,
+                      }}
+                    />
+                  ) : (
+                    "N/A"
+                  )}
+                </td>
+                <td className="py-2 px-4 border border-gray-300">
+                  {assignment.uploadedFiles !== "-" && (
+                    <>
+                      <a
+                        href={`${config.baseURL}uploads/${assignment.uploadedFiles}`}
+                        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mx-1"
+                        download
+                      >
+                        Download
+                      </a>
+                      <Link
+                        to={`/feedback?a=${assignment._id}`}
+                        className={`bg-blue-600 text-white px-4 py-2 rounded mx-1 ${
+                          assignment.FeedbackMessage !== "-" ? "cursor-not-allowed opacity-50" : "hover:bg-blue-700"
+                        }`}
+                        style={{ pointerEvents: assignment.FeedbackMessage !== "-" ? "none" : "auto" }}
+                      >
+                        Feedback
+                      </Link>
+                    </>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     );
-  }
+  };
 
-  if (error) {
-    return <div>{error.message}</div>;
-  }
+  const formatDeadline = (deadline) => {
+    const date = new Date(deadline);
+    return date.toISOString().split("T")[0];
+  };
 
   return (
     <div>
       <Header />
       <div className="container mx-auto my-10 relative">
         <h1 className="text-4xl font-semibold text-center my-5">View Work</h1>
-        <div className="absolute right-0 top-5 mt-5 mr-5">
-          <input
-            type="text"
-            placeholder="Search work..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="p-2 border border-gray-300 rounded-full w-full sm:w-96 focus:outline-none focus:border-blue-500"
-          />
-        </div>
-        <div className="mt-16 overflow-x-auto mx-20">
-          <table className="min-w-full bg-white border border-gray-200">
-            <thead>
-              <tr>
-                <th className="py-2 px-4 border border-gray-300">
-                  Assignment Name
-                </th>
-                <th className="py-2 px-4 border border-gray-300">Deadline</th>
-                <th className="py-2 px-4 border border-gray-300">Price</th>
-                <th className="py-2 px-4 border border-gray-300">Rating</th>
-                <th className="py-2 px-4 border border-gray-300">Feedback</th>
-                <th className="py-2 px-4 border border-gray-300">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentAssignments.map((assignment, index) => (
-                <tr key={index} className="text-center">
-                  <td className="py-2 px-4 border border-gray-300">
-                    {assignment.assignmentName}
-                  </td>
-                  <td className="py-2 px-4 border border-gray-300">
-                    {formatDeadline(assignment.deadlineDate)}
-                  </td>
-                  <td className="py-2 px-4 border border-gray-300">
-                    {assignment.price}
-                  </td>
-                  <td className="py-2 px-4 border border-gray-300">
-                    {assignment.performanceRating !== "-"
-                      ? assignment.performanceRating
-                      : "N/A"}
-                  </td>
-                  <td className="py-2 px-4 border border-gray-300">
-                    {assignment.FeedbackMessage !== "-" ? (
-                      <span
-                        dangerouslySetInnerHTML={{
-                          __html: assignment.FeedbackMessage,
-                        }}
-                      />
-                    ) : (
-                      "N/A"
-                    )}
-                  </td>
-                  <td className="py-2 px-4 border border-gray-300">
-                    {assignment.uploadedFiles !== "-" && (
-                      <>
-                        <a
-                          href={`${config.baseURL}uploads/${assignment.uploadedFiles}`}
-                          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mx-1"
-                          download>
-                          Download
-                        </a>
-                        <Link
-                          to={`/feedback?a=${assignment._id}`}
-                          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mx-1">
-                          Feedback
-                        </Link>
-                      </>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        {renderAssignments()}
         <div className="flex justify-center mt-10">
           <ReactPaginate
             previousLabel={"Previous"}
             nextLabel={"Next"}
             breakLabel={"..."}
             breakClassName={"break-me"}
-            pageCount={Math.ceil(
-              filteredAssignments.length / assignmentsPerPage
-            )}
+            pageCount={totalPages}
             marginPagesDisplayed={2}
             pageRangeDisplayed={5}
             onPageChange={handlePageClick}
@@ -209,11 +178,6 @@ function Viewassignments() {
       <Footer />
     </div>
   );
-
-  function formatDeadline(deadline) {
-    const date = new Date(deadline);
-    return date.toISOString().split("T")[0];
-  }
 }
 
 export default Viewassignments;

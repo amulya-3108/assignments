@@ -17,12 +17,12 @@ function useQuery() {
 
 function Feedback() {
   const query = useQuery();
-  const id = query.get('a');
+  const id = query.get("a");
 
-  const [performanceRating, setFeedback] = useState(false);
-  const [Feedbackmessage, setMessage] = useState("");
+  const [performanceRating, setPerformanceRating] = useState("");
+  const [FeedbackMessage, setFeedbackMessage] = useState("");
   const [error, setError] = useState({});
-  const setSubmittedFeedback = useState("");
+  const [submittedFeedback, setSubmittedFeedback] = useState("");
 
   useEffect(() => {
     console.log("Assignment ID:", id);
@@ -31,35 +31,40 @@ function Feedback() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = {};
-    if (!performanceRating){ newErrors.performanceRating = "Rating is required"}
-    if (!Feedbackmessage){ newErrors.Feedbackmessage = "Message is required"}
+    if (!performanceRating) newErrors.performanceRating = "Rating is required";
+    if (!FeedbackMessage) newErrors.FeedbackMessage = "Message is required";
     setError(newErrors);
+
+    if (Object.keys(newErrors).length > 0) {
+      return;
+    }
+
     try {
       const token = localStorage.getItem("authToken");
       const response = await axios.post(
         `${config.baseURL}feedback/${id}`,
         {
           performanceRating: performanceRating,
-          FeedbackMessage: Feedbackmessage
+          FeedbackMessage: FeedbackMessage,
         },
         {
           headers: {
-            'Authorization': token
+            Authorization: token,
           },
         }
       );
       if (response.status === 200) {
-        setSubmittedFeedback(Feedbackmessage);
+        setSubmittedFeedback(FeedbackMessage);
         toast.success("Feedback submitted");
-        setFeedback(false);
-        setMessage('');
+        setPerformanceRating("");
+        setFeedbackMessage("");
       }
     } catch (error) {
       if (error.response && error.response.status === 401) {
         toast.error("Error while submitting feedback, try again");
       } else {
         console.error("Error message:", error.message);
-        toast.error("Something went wrong, try again!");
+        toast.error(error.message);
       }
     }
   };
@@ -73,7 +78,8 @@ function Feedback() {
           <div className="w-full mx-auto justify-around items-center">
             <form
               className="px-16 pt-4 pb-1 mb-4 justify-center items-center"
-              onSubmit={handleSubmit}>
+              onSubmit={handleSubmit}
+            >
               <div className="mb-4">
                 <label className="block text-gray-700 text-lg font-bold mb-2">
                   Select Your Response
@@ -85,7 +91,7 @@ function Feedback() {
                         inputId="excellent"
                         name="response"
                         value="Excellent"
-                        onChange={(e) => setFeedback(e.value)}
+                        onChange={(e) => setPerformanceRating(e.value)}
                         checked={performanceRating === "Excellent"}
                       />
                       <label htmlFor="excellent" className="ml-2">
@@ -97,7 +103,7 @@ function Feedback() {
                         inputId="good"
                         name="response"
                         value="Good"
-                        onChange={(e) => setFeedback(e.value)}
+                        onChange={(e) => setPerformanceRating(e.value)}
                         checked={performanceRating === "Good"}
                       />
                       <label htmlFor="good" className="ml-2">
@@ -109,7 +115,7 @@ function Feedback() {
                         inputId="average"
                         name="response"
                         value="Average"
-                        onChange={(e) => setFeedback(e.value)}
+                        onChange={(e) => setPerformanceRating(e.value)}
                         checked={performanceRating === "Average"}
                       />
                       <label htmlFor="average" className="ml-2">
@@ -121,7 +127,7 @@ function Feedback() {
                         inputId="bad"
                         name="response"
                         value="Bad"
-                        onChange={(e) => setFeedback(e.value)}
+                        onChange={(e) => setPerformanceRating(e.value)}
                         checked={performanceRating === "Bad"}
                       />
                       <label htmlFor="bad" className="ml-2">
@@ -142,21 +148,23 @@ function Feedback() {
                 </label>
                 <div className="card flex justify-content-center">
                   <Editor
-                    value={Feedbackmessage}
-                    onTextChange={(e) => setMessage(e.htmlValue)}
+                    value={FeedbackMessage}
+                    onTextChange={(e) => setFeedbackMessage(e.htmlValue)}
                     style={{ height: "220px" }}
                   />
                 </div>
-                {error.Feedbackmessage && (
+                {error.FeedbackMessage && (
                   <span className="text-red-500 text-sm mt-2">
-                    {error.Feedbackmessage}
+                    {error.FeedbackMessage}
                   </span>
                 )}
               </div>
               <div className="flex items-center justify-between">
                 <button
                   className="bg-blue-600 flex text-white items-center justify-center w-full font-bold py-2 px-4 text-lg rounded-lg focus:outline-none focus:shadow-outline border-2 border-blue-600 mb-5 hover:bg-white hover:text-black hover:border-2 hover:border-blue-600"
-                  type="submit">
+                  type="submit"
+                  disabled={submittedFeedback !== ""}
+                >
                   Submit
                 </button>
               </div>
