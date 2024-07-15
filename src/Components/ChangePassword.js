@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import Header from "./Header";
 import Footer from "./Footer";
 import axios from "axios";
@@ -11,7 +10,6 @@ function Changepassword() {
   const [currentPassword, setPassword] = useState("");
   const [newPassword, setnewPassword] = useState("");
   const [confirmPassword, setcPassword] = useState("");
-  const navigate = useNavigate();
   const [error, setError] = useState("");
   async function changepasswordData(e) {
     e.preventDefault();
@@ -33,9 +31,6 @@ function Changepassword() {
       );
       if (response.status === 200) {
         toast.success("Password Changed!");
-        setTimeout(() => {
-          navigate("/");
-        }, 5000);
       }
     } catch (error) {
       if (error.response && error.response.status === 401) {

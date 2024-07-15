@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import "../index.css";
-import Header from "./Header";
-import Footer from "./Footer";
+import "../../index.css";
+import Header from "../Header";
+import Footer from "../Footer";
 import { RadioButton } from "primereact/radiobutton";
 import { Editor } from "primereact/editor";
 import { useLocation } from "react-router-dom";
-import config from "../config";
+import config from "../../config";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";

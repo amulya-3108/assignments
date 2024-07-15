@@ -3,8 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import config from "../config"; 
-import Loader from "./Loader";
+import config from "../../config"; 
+import Loader from "../Loader";
 
 function Login() {
   const navigate = useNavigate();

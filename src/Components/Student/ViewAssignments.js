@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
-import config from "../config";
+import config from "../../config";
 import { Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Loader from "./Loader";
-import Header from "./Header";
-import Footer from "./Footer";
+import Loader from "../Loader";
+import Header from "../Header";
+import Footer from "../Footer";
 import ReactPaginate from "react-paginate";
 
 function Viewassignments() {

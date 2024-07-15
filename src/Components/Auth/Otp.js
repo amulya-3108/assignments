@@ -4,7 +4,7 @@ import axios from "axios";
 import OtpInput from "react-otp-input";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import config from "../config";
+import config from "../../config";
 
 function Otp() {
   const [email, setEmail] = useState("");

@@ -1,13 +1,13 @@
 import React, { useRef, useState, useEffect } from "react";
-import "../index.css";
-import Header from "./Header";
-import Footer from "./Footer";
+import "../../index.css";
+import Header from "../Header";
+import Footer from "../Footer";
 import { FileUpload } from "primereact/fileupload";
-import config from "../config";
+import config from "../../config";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Loader from "./Loader";
+import Loader from "../Loader";
 
 function Addassignments() {
   const [error, setError] = useState({});

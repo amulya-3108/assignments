@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import config from "../config";
+import config from "../../config";
 import { RadioButton } from "primereact/radiobutton";
 import { FileUpload } from "primereact/fileupload";
 import { ToastContainer, toast } from "react-toastify";
@@ -92,6 +92,9 @@ function Signin() {
           fileInputRef.current.clear();
         }
         toast.success("Registered successfully");
+        setTimeout(() => {
+          navigate("/login");
+        }, 3000);
       }
     } catch (error) {
       if (error.response && error.response.status === 401) {

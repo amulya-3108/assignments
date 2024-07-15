@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
-import "../index.css";
-import Header from "./Header";
-import Footer from "./Footer";
+import "../../index.css";
+import Header from "../Header";
+import Footer from "../Footer";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
-import config from "../config";
+import config from "../../config";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faListCheck, faDollar } from "@fortawesome/free-solid-svg-icons";
-import Loader from "./Loader";
+import Loader from "../Loader";
 import { Link } from "react-router-dom";
 
 function Home() {

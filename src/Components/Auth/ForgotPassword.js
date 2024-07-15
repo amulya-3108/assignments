@@ -3,7 +3,7 @@ import {useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import config from "../config";
+import config from "../../config";
 
 function Forgot() {
   const navigate = useNavigate();
