@@ -14,14 +14,17 @@ function Signin() {
   const [email, setEmail] = useState("");
   const [contact, setContact] = useState("");
   const [password, setPassword] = useState("");
+  const [ExistRefferal, setExistRefferal] = useState("");
   const [role, setRole] = useState("");
   const [industry, setIndustry] = useState("");
-  const [files, setFiles] = useState("");
+  const [files, setFiles] = useState(null);
   const fileInputRef = useRef(null);
   const [error, setError] = useState({});
+
   const handleFileSelect = (event) => {
     setFiles(event.files[0]);
   };
+
   async function signupData(e) {
     e.preventDefault();
     const newErrors = {};
@@ -40,41 +43,38 @@ function Signin() {
     if (!email) {
       newErrors.email = "Email is required";
     } 
-    // else if (!/\S+@\S+\.\S+/.test(email)) {
-    //   newErrors.email = "Email address is invalid";
-    // }
     if (!contact) {
       newErrors.contact = "Contact number is required";
     } 
-    // else if (!/^\d{10}$/.test(contact)) {
-    //   newErrors.contact = "Contact number is invalid";
-    // }
     if (!password) {
       newErrors.password = "Password is required";
     } else if (password.length < 6) {
       newErrors.password = "Password must be at least 8 characters long";
-    } 
-    // else {
-    //   if (!/[A-Z]/.test(password)) {
-    //     newErrors.password =
-    //       "Password must contain at least one uppercase letter";
-    //   } else if (!/[a-z]/.test(password)) {
-    //     newErrors.password =
-    //       "Password must contain at least one lowercase letter";
-    //   } else if (!/\d/.test(password)) {
-    //     newErrors.password = "Password must contain at least one number";
-    //   } else if (!/[!@#$%^&*()]/.test(password)) {
-    //     newErrors.password =
-    //       "Password must contain at least one special character (!@#$%^&*())";
-    //   }
-    // }
+    }
 
     setError(newErrors);
 
     if (Object.keys(newErrors).length > 0) return;
+
+    const formData = new FormData();
+    formData.append("firstname", firstname);
+    formData.append("lastname", lastname);
+    formData.append("email", email);
+    formData.append("contact", contact);
+    formData.append("password", password);
+    formData.append("role", role);
+    formData.append("industry", industry);
+    formData.append("userstatus", 1);
+    formData.append("file", files);
+    formData.append("referral", ExistRefferal);
+
     try {
-      const response = await axios.post(`${config.baseURL}signup`, { firstname: firstname, lastname: lastname, email: email, contact: contact, password: password,role:role,industry:industry, userstatus:1,file:files  }
-    );
+      const response = await axios.post(`${config.baseURL}signup`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+
       if (response.status === 200) {
         console.log("success");
         localStorage.setItem("email", email);
@@ -85,15 +85,13 @@ function Signin() {
         setContact("");
         setEmail("");
         setPassword("");
+        setExistRefferal("");
         setIndustry("");
         setFiles(null);
         if (fileInputRef.current) {
           fileInputRef.current.clear();
         }
         toast.success("Registered successfully");
-        setTimeout(() => {
-          navigate("/home");
-        }, 3000);
       }
     } catch (error) {
       if (error.response && error.response.status === 401) {
@@ -106,6 +104,7 @@ function Signin() {
       }
     }
   }
+
   return (
     <div className="container mx-auto w-full md:w-1/3 justify-around items-center mt-20 mb-20 rounded-2xl md:border">
       <h1 className="text-4xl font-semibold my-5 text-center">Sign Up</h1>
@@ -205,7 +204,7 @@ function Signin() {
                     <RadioButton
                       inputId="student"
                       name="role"
-                      value="Student"
+                      value="student"
                       onChange={(e) => setRole(e.value)}
                       checked={role === "student"}
                     />
@@ -217,7 +216,7 @@ function Signin() {
                     <RadioButton
                       inputId="solver"
                       name="role"
-                      value="Solver"
+                      value="solver"
                       onChange={(e) => setRole(e.value)}
                       checked={role === "solver"}
                     />
@@ -260,42 +259,38 @@ function Signin() {
                 Profile Picture
               </label>
               <div className="card">
-                <FileUpload
-                  name="files"
-                  ref={fileInputRef}
-                  multiple
-                  accept="image/*"
-                  maxFileSize={1000000}
-                  emptyTemplate={
-                    <p className="m-3 text-gray-500 text-center py-4 border-dashed border-2 border-blue-500 rounded">
-                      Drag and drop files to here to upload.
-                    </p>
-                  }
-                  chooseOptions={{
-                    label: "Choose",
-                    icon: "pi pi-fw pi-plus",
-                    className:
-                      "p-button p-component m-3 w-20 h-8 bg-blue-600 rounded text-white hover:bg-blue-700",
-                  }}
-                  uploadOptions={{
-                    label: "Upload",
-                    icon: "pi pi-upload",
-                    className:
-                      "p-button p-component m-3 w-20 h-8 bg-green-600 rounded text-white hover:bg-green-700",
-                  }}
-                  cancelOptions={{
-                    label: "Cancel",
-                    icon: "pi pi-times",
-                    className:
-                      "p-button p-component m-3 w-20 h-8 bg-red-600 rounded text-white hover:bg-red-700",
-                  }}
-                  onSelect={handleFileSelect}
-                />
-                {/* <input 
-        type="file" name="files"
-        onChange={(e) => setFile(e.target.files[0])}
-        className="border-2 border-blue-500 hover:border-blue-700"
-      /> */}
+              <FileUpload
+  name="file" // Change this to match the multer setup
+  ref={fileInputRef}
+  multiple={false}
+  accept="image/*"
+  maxFileSize={1000000}
+  emptyTemplate={
+    <p className="m-3 text-gray-500 text-center py-4 border-dashed border-2 border-blue-500 rounded">
+      Drag and drop files to here to upload.
+    </p>
+  }
+  chooseOptions={{
+    label: "Choose",
+    icon: "pi pi-fw pi-plus",
+    className:
+      "p-button p-component m-3 w-20 h-8 bg-blue-600 rounded text-white hover:bg-blue-700",
+  }}
+  uploadOptions={{
+    label: "Upload",
+    icon: "pi pi-upload",
+    className:
+      "p-button p-component m-3 w-20 h-8 bg-green-600 rounded text-white hover:bg-green-700",
+  }}
+  cancelOptions={{
+    label: "Cancel",
+    icon: "pi pi-times",
+    className:
+      "p-button p-component m-3 w-20 h-8 bg-red-600 rounded text-white hover:bg-red-700",
+  }}
+  onSelect={handleFileSelect}
+/>
+
                 {error.files && (
                   <span className="text-red-500 text-sm mt-2">
                     {error.files}
@@ -317,6 +312,22 @@ function Signin() {
               />
               {error.password && (
                 <span className="text-red-500 text-sm">{error.password}</span>
+              )}
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700 text-lg font-bold mb-2">
+                Referral Code
+              </label>
+              <input
+                className="shadow appearance-none border rounded w-full py-2 px-3 h-12 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                id="ExistRefferal"
+                type="text"
+                value={ExistRefferal}
+                placeholder="Refferal"
+                onChange={(e) => setExistRefferal(e.target.value)}
+              />
+              {error.ExistRefferal && (
+                <span className="text-red-500 text-sm">{error.ExistRefferal}</span>
               )}
             </div>
             <div className="flex items-center justify-between">

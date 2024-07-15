@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import config from "../config";
 import axios from "axios";
+import Avatar from 'react-avatar';
 
 function Header() {
   const [isActive, setActive] = useState(false);
@@ -11,6 +12,7 @@ function Header() {
     useState(false);
   const [isProfileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [role, setRole] = useState(null);
+  const [profilepic, setProfilePic] = useState(null);
   const navigate = useNavigate();
 
   const toggleNav = () => {
@@ -26,8 +28,10 @@ function Header() {
         })
         .then((response) => {
           if (response.status === 200) {
-            const { role } = response.data.data;
+           
+            const { role,profilepic } = response.data.data;
             setRole(role);
+            setProfilePic(profilepic);
             // console.log("Role set to:", role);
             setIsLoggedIn(true);
           }
@@ -105,11 +109,23 @@ function Header() {
                         Change Password
                       </Link>
                       <Link
+                        to="/referal"
+                        className="block px-4 py-2 text-black hover:bg-gray-200">
+                        Referral
+                      </Link>
+                      <Link
                         to="/manageprofile"
                         className="block px-4 py-2 text-black hover:bg-gray-200">
                         Manage Profile
                       </Link>
                     </div>
+                  )}
+                </div>
+                <div className="relative">
+                {profilepic ? (
+                    <Avatar size="40" round={true} src={`${config.baseURL}/uploads/${profilepic}`} />
+                  ) : (
+                    <Avatar size="40" round={true} />
                   )}
                 </div>
                 <div className="relative">
