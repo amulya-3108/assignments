@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import "../../index.css";
 import Header from "../Header";
 import Footer from "../Footer";
@@ -8,8 +8,9 @@ import axios from "axios";
 import config from "../../config";
 import Loader from "../Loader";
 import ReactPaginate from "react-paginate";
+import { FileUpload } from "primereact/fileupload";
 
-function Acceptedassignments() {
+function AcceptedAssignments() {
   const [assignments, setAssignments] = useState([]);
   const [filteredAssignments, setFilteredAssignments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -17,6 +18,9 @@ function Acceptedassignments() {
   const [currentPage, setCurrentPage] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [uploadingAssignmentId, setUploadingAssignmentId] = useState("");
+  const [fileToUpload, setFileToUpload] = useState(null);
+  const fileUploadRef = useRef(null);
+
   const assignmentsPerPage = 10;
 
   useEffect(() => {
@@ -89,17 +93,20 @@ function Acceptedassignments() {
     }
   };
 
-  const handleFileUpload = async (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
+  const handleFileSelect = (event) => {
+    setFileToUpload(event.files[0]);
+  };
+
+  const handleFileUpload = async () => {
+    if (!fileToUpload) return;
 
     try {
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("file", fileToUpload);
 
       const token = localStorage.getItem("authToken");
       const response = await axios.post(
-        `${config.baseURL}uploadFile/${uploadingAssignmentId}`,
+        `${config.baseURL}post/Solverassignments/${uploadingAssignmentId}`,
         formData,
         {
           headers: {
@@ -111,7 +118,16 @@ function Acceptedassignments() {
 
       if (response.status === 200) {
         toast.success("File uploaded successfully!");
-        window.location.reload();
+        setFileToUpload(null);
+        if (fileUploadRef.current) {
+          fileUploadRef.current.clear();
+        }
+        // Update assignments state without reloading the page
+        const updatedAssignments = assignments.map(assignment => 
+          assignment._id === uploadingAssignmentId ? { ...assignment, files: response.data.file } : assignment
+        );
+        setAssignments(updatedAssignments);
+        setFilteredAssignments(updatedAssignments);
       } else {
         toast.error("Failed to upload file. Please try again.");
       }
@@ -186,11 +202,49 @@ function Acceptedassignments() {
                       Upload
                     </button>
                     {uploadingAssignmentId === assignment._id && (
-                      <input
-                        type="file"
-                        onChange={handleFileUpload}
-                        className="block mt-2 mx-auto"
-                      />
+                      <div className="card">
+                        <FileUpload
+                          name="file" // Ensure this matches the field name used in multer
+                          ref={fileUploadRef}
+                          multiple
+                        
+                          maxFileSize={250 * 1024 * 1024}
+                          emptyTemplate={
+                            <p className="m-3 text-gray-500 text-center py-4 border-dashed border-2 border-blue-500 rounded">
+                              Drag and drop files to here to upload.
+                            </p>
+                          }
+                          chooseOptions={{
+                            label: "Choose",
+                            icon: "pi pi-fw pi-plus",
+                            className:
+                              "p-button p-component m-3 w-20 h-8 bg-blue-600 rounded text-white hover:bg-blue-700",
+                          }}
+                          uploadOptions={{
+                            label: "Upload",
+                            icon: "pi pi-upload",
+                            className:
+                              "p-button p-component m-3 w-20 h-8 bg-green-600 rounded text-white hover:bg-green-700",
+                          }}
+                          cancelOptions={{
+                            label: "Cancel",
+                            icon: "pi pi-times",
+                            className:
+                              "p-button p-component m-3 w-20 h-8 bg-red-600 rounded text-white hover:bg-red-700",
+                          }}
+                          onSelect={handleFileSelect}
+                        />
+                        {error && (
+                          <span className="text-red-500 text-sm mt-2">
+                            {error.files}
+                          </span>
+                        )}
+                        <button
+                          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 mt-2"
+                          onClick={handleFileUpload}>
+                          Upload File
+                        </button>
+                      </div>
                     )}
                   </td>
                 </tr>
@@ -242,4 +296,4 @@ function Acceptedassignments() {
   }
 }
 
-export default Acceptedassignments;
+export default AcceptedAssignments;

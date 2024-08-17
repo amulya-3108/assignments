@@ -93,7 +93,9 @@ import Aboutus from "./Components/AboutUs";
 import Contactus from "./Components/ContactUs";
 import Privacypolicy from "./Components/PrivacyPolicy";
 import Manageprofile from "./Components/ManageProfile";
-
+import Referral from "./Components/Referral";
+import HomePageAdmin from "./Components/admin/HomePage";
+import Users from "./Components/admin/users";
 function App() {
   const [loading, setLoading] = useState(true);
 
@@ -130,10 +132,13 @@ function App() {
           <Route path="/showwork" element={<ProtectedRoute requiredRole="solver"><Showwork /></ProtectedRoute>} />
           <Route path="/acceptedassignments" element={<ProtectedRoute requiredRole="solver"><Acceptedassignments /></ProtectedRoute>} />
           <Route path="/manageprofile" element={<ProtectedRoute><Manageprofile /></ProtectedRoute>} />
+          <Route path="/referral" element={<ProtectedRoute><Referral /></ProtectedRoute>} />
 
           <Route path="/aboutus" element={<Aboutus />} />
           <Route path="/contactus" element={<Contactus />} />
           <Route path="/privacypolicy" element={<Privacypolicy />} />
+          <Route path="/Admin/Home" element={<HomePageAdmin />} />
+          <Route path="/Admin/Users" element={<Users />} />
         </Routes>
       </div>
     </Router>

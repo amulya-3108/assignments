@@ -61,15 +61,23 @@ function Otp() {
   };
 
   const resendOtp = async () => {
+    const email = localStorage.getItem("email");
     try {
-      const response = await axios.post(`${config.baseURL}otp/resend`, { email, password });
+      const response = await axios.post(`${config.baseURL}resendOtp`, { email });
       if (response.status === 200) {
         toast.success("OTP has been resent successfully!");
       } else {
         toast.error("Failed to resend OTP. Please try again.");
       }
     } catch (error) {
-      toast.error("An error occurred while resending OTP. Please try again.");
+      if(error.response){
+        if(error.response.status===429){
+          toast.error(error.response.data.message);
+        }else{
+          toast.error("Please try again..")
+        }
+      }
+     
     }
   };
 

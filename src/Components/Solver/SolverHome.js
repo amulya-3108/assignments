@@ -18,7 +18,7 @@ function Solverhome() {
   const [assignments, setAssignments] = useState([]);
   const [upcomingAssignments, setUpcomingAssignments] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState(null); 
 
   useEffect(() => {
     async function fetchData() {

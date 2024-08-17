@@ -15,6 +15,7 @@ const acceptWork = async (e, assignmentId) => {
 
   try {
     const token = localStorage.getItem("authToken");
+  
     if (!token) {
       toast.error("Authorization token is missing");
       return;
@@ -53,6 +54,7 @@ function Showwork() {
     async function fetchData() {
       try {
         const token = localStorage.getItem("authToken");
+        
         if (!token) {
           toast.error("Authorization token is missing");
           setLoading(false);

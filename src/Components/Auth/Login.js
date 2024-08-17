@@ -27,8 +27,8 @@ function Login() {
         navigate("/password");
       }
     } catch (error) {
-      if (error.response && error.response.status === 401) {
-        setError("Invalid email or phone number");
+      if (error.response.status === 401) {
+        toast.error(error.response.data.message);
       } else {
         console.error("Error message:", error.message);
         toast.error("Something went wrong try again!");

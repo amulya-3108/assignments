@@ -109,7 +109,7 @@ function Header() {
                         Change Password
                       </Link>
                       <Link
-                        to="/referal"
+                        to="/referral"
                         className="block px-4 py-2 text-black hover:bg-gray-200">
                         Referral
                       </Link>
@@ -183,6 +183,11 @@ function Header() {
                         to="/changepassword"
                         className="block px-4 py-2 text-black hover:bg-gray-200">
                         Change Password
+                      </Link>
+                      <Link
+                        to="/referral"
+                        className="block px-4 py-2 text-black hover:bg-gray-200">
+                        Referral
                       </Link>
                       <Link
                         to="/manageprofile"
